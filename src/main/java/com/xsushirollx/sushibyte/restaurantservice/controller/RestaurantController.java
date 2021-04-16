@@ -1,10 +1,8 @@
 package com.xsushirollx.sushibyte.restaurantservice.controller;
 
 import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
-import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCouldNotCreateException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,13 +13,17 @@ import java.util.List;
 @RestController()
 public class RestaurantController {
 
-    @Autowired
-    private RestaurantRepository repository;
+    private final RestaurantRepository repository;
+
+    public RestaurantController(RestaurantRepository repository) {
+        this.repository = repository;
+    }
 
 
     @GetMapping("/restaurant")
-    List<Restaurant> getAllRestaurants() {
-        return repository.findAll();
+    ResponseEntity<List<Restaurant>> getAllRestaurants() {
+
+        return new ResponseEntity<>(repository.findAll(),HttpStatus.OK);
     }
 
     @GetMapping("/restaurant/{id}")
@@ -49,9 +51,10 @@ public class RestaurantController {
 
 
     @PutMapping("/restaurant/{id}")
-    Restaurant updateRestaurant(@RequestBody Restaurant newRestaurant, @PathVariable Long id) {
+    ResponseEntity<Restaurant> updateRestaurant(@RequestBody Restaurant newRestaurant,
+                                                @PathVariable Long id) {
 
-        return repository.findById(id).map(
+        return new ResponseEntity<>(repository.findById(id).map(
                 restaurant -> {
                     if (newRestaurant.getName() != null) restaurant.setName(newRestaurant.getName());
                     if (newRestaurant.getAverageRating() != null)
@@ -68,7 +71,8 @@ public class RestaurantController {
                     return repository.save(restaurant);
                 })
                 .orElseThrow(() ->
-                        new RestaurantNotFoundException(id));
+                        new RestaurantNotFoundException(id)),
+                HttpStatus.OK);
     }
 
     @DeleteMapping("/restaurant/{id}")

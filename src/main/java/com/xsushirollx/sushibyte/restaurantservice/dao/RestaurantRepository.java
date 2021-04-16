@@ -15,6 +15,5 @@ public interface RestaurantRepository extends JpaRepository<Restaurant, Long> {
 //    @Modifying
     @Transactional
     @Query(value = "UPDATE Restaurant restaurant SET restaurant.isActive = 0 WHERE restaurant.id = :id")
-//    @Query(value = "UPDATE sushibyte.restaurant SET is_active=0 WHERE `id`='7';")
     void setInactiveById(@Param("id") Long id);
 }
