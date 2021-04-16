@@ -10,7 +10,6 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
-//import java.util.Vector;
 
 @Entity
 @Table(name="food")
@@ -39,7 +38,6 @@ public class Food {
 //    private SerialBlob image;
 
     @Lob
-//    @Column
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
@@ -51,8 +49,8 @@ public class Food {
     private Integer special;
 
     @Column(name="is_active")
-    @Min(1)
-    @Max(2)
+//    @Min(1)
+    @Max(1)
     private Integer isActive;
 
     @Column(name="category")
@@ -77,8 +75,6 @@ public class Food {
         return category;
     }
 
- /*   //Relationships
-    private Vector<OrderItem> orderitem = new Vector<>();*/
 
 
     public void setCategory(Integer category) {
@@ -179,13 +175,7 @@ public class Food {
         }
     }
 
-/*    public Vector<OrderItem> getOrderitem() {
-        return orderitem;
-    }
 
-    public void setOrderitem(Vector<OrderItem> orderitem) {
-        this.orderitem = orderitem;
-    }*/
 
 
 }
