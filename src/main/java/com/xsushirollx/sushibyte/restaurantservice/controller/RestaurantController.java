@@ -23,7 +23,7 @@ public class RestaurantController {
     @GetMapping("/restaurant")
     ResponseEntity<List<Restaurant>> getAllRestaurants() {
 
-        return new ResponseEntity<>(repository.findAll(),HttpStatus.OK);
+        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
     @GetMapping("/restaurant/{id}")
@@ -34,18 +34,32 @@ public class RestaurantController {
     }
 
     @PostMapping("/restaurant")
-    ResponseEntity<Restaurant> addNewRestaurant(@RequestBody Restaurant newRestaurant) {
+    ResponseEntity<?> addNewRestaurant(@RequestBody Restaurant newRestaurant) {
         Restaurant restaurantToBeAdded = new Restaurant(newRestaurant.getName(),
                 newRestaurant.getPriceCategory(), newRestaurant.getAverageRating(),
                 newRestaurant.getTags(), newRestaurant.getIsActive(),
                 newRestaurant.getStreetAddress(), newRestaurant.getCity(),
                 newRestaurant.getState(), newRestaurant.getZipCode());
-        try {
-            return new ResponseEntity<Restaurant>((repository.save(restaurantToBeAdded)), HttpStatus.OK);
-        } catch (IllegalArgumentException | ConstraintViolationException ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        } catch (Exception ex) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+        Restaurant duplicateRestaurantCheck = repository.checkForExistingRestaurantByValues(
+                restaurantToBeAdded.getName(),
+                restaurantToBeAdded.getStreetAddress(),
+                restaurantToBeAdded.getCity(),
+                restaurantToBeAdded.getState(),
+                restaurantToBeAdded.getZipCode());
+
+        if (restaurantToBeAdded.equals(duplicateRestaurantCheck)) {
+            return ResponseEntity.unprocessableEntity()
+                    .body("This Restaurant already exists");
+        } else {
+            try {
+                return new ResponseEntity<Restaurant>((repository.save(restaurantToBeAdded)), HttpStatus.OK);
+            } catch (IllegalArgumentException | ConstraintViolationException ex) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please check " +
+                        "for any missing fields which are required fora new restaurant to be created.");
+            } catch (Exception ex) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         }
     }
 

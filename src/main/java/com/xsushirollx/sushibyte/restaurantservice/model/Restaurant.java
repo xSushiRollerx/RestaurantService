@@ -101,7 +101,9 @@ public class Restaurant {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Restaurant that = (Restaurant) o;
-        return Objects.equals(id, that.id);
+        return Objects.equals(name, that.name) && Objects.equals(streetAddress,
+                that.streetAddress) && Objects.equals(city, that.city) &&
+                Objects.equals(state, that.state) && Objects.equals(zipCode, that.zipCode);
     }
 
     @Override

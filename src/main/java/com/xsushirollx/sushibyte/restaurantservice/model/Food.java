@@ -86,7 +86,7 @@ public class Food {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Food food = (Food) o;
-        return Objects.equals(id, food.id);
+        return Objects.equals(restaurantID, food.restaurantID) && Objects.equals(name, food.name);
     }
 
     @Override
