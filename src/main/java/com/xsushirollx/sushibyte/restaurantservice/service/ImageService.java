@@ -3,19 +3,16 @@ package com.xsushirollx.sushibyte.restaurantservice.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
-public class MyImageService implements MultipartFile {
+public class ImageService implements MultipartFile {
 
     @Autowired
     MultipartFile MyMultipartFile;
 
     String fileName;
 
-    public MyImageService(String image) {
+    public ImageService(String image) {
         this.setFileName(image);
     }
 
@@ -80,36 +77,82 @@ public class MyImageService implements MultipartFile {
     @Override
     public byte[] getBytes() throws IOException {
         byte[] size = new byte[0];
-        FileInputStream fin = null;
+//        FileInputStream fin = null;
+//
+//        if (!this.isEmpty()) {
+//            File newFile = new File(getFileName());
+//            try {
+//                // create FileInputStream object
+//                fin = new FileInputStream(newFile);
+//                size = fin.readAllBytes();
+//            } catch (SecurityException ex) {
+//            } catch (Exception ex) {
+//
+//            }
+//            finally {
+//                if(fin != null) {
+//                    fin.close();
+//                }
+//            }
+//        }
 
-        if (!this.isEmpty()) {
-            File newFile = new File(getFileName());
-            try {
-                // create FileInputStream object
-                fin = new FileInputStream(newFile);
-                size = fin.readAllBytes();
-            } catch (SecurityException ex) {
-            } catch (Exception ex) {
-
-            }
-            finally {
-                if(fin != null) {
-                    fin.close();
-                }
-            }
+        try {
+            size = this.getInputStream().readAllBytes();
+        } catch (Exception ex) {
         }
+
+
         return size;
     }
 
     @Override
     public InputStream getInputStream() throws IOException {
-        return MyMultipartFile.getInputStream();
+        FileInputStream uploadedFileInputStream = null;
+
+        if (!this.isEmpty()) {
+            File newFile = new File(getFileName());
+            try {
+                // create FileInputStream object
+                uploadedFileInputStream = new FileInputStream(newFile);
+
+            } catch (SecurityException ex) {
+            } catch (Exception ex) {
+            }
+
+
+
+            //        return MyMultipartFile.getInputStream();
+        }
+        return uploadedFileInputStream;
     }
+
 
     @Override
     public void transferTo(File dest) throws IOException, IllegalStateException {
-        MyMultipartFile.transferTo(dest);
+        OutputStream os = null;
+
+        try {
+            // Initialize a pointer
+            // in file using OutputStream
+            os = new FileOutputStream(dest);
+
+
+            // Starts writing the bytes in it
+            os.write(this.getBytes());
+        }
+        catch (Exception e) {
+            System.out.println("Exception: " + e);
+        }
+        finally {
+        if(os != null) os.close();
+        }
     }
+
+        //        MyMultipartFile.transferTo(dest);
+
+
+
+
 
     /*public static void main(String[] args) {
 

@@ -13,8 +13,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FoodService {
 
-    @Autowired
-    private FoodRepository foodRepository;
+//    @Autowired
+//    private FoodRepository foodRepository;
 
     //    public void  saveFood(
     public Food prepFood(
@@ -53,7 +53,7 @@ public class FoodService {
 
     public String prepImage(String image) {
 
-        MyImageService myImageService = new MyImageService(image);
+        ImageService myImageService = new ImageService(image);
         String ImageToReturn = "";
 
         String fileName = StringUtils.cleanPath(myImageService.getOriginalFilename());
@@ -68,7 +68,7 @@ public class FoodService {
         return ImageToReturn;
     }
 
-    public String prepImage(MyImageService image) {
+    public String prepImage(ImageService image) {
 
         String ImageToReturn = "";
 
