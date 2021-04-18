@@ -53,7 +53,7 @@ public class RestaurantController {
                     .body("This Restaurant already exists");
         } else {
             try {
-                return new ResponseEntity<Restaurant>((repository.save(restaurantToBeAdded)), HttpStatus.OK);
+                return new ResponseEntity<Restaurant>((repository.save(restaurantToBeAdded)), HttpStatus.CREATED);
             } catch (IllegalArgumentException | ConstraintViolationException ex) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please check " +
                         "for any missing fields which are required fora new restaurant to be created.");

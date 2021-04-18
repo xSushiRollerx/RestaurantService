@@ -71,14 +71,14 @@ public class Restaurant {
         this.zipCode = zipCode;
     }
 
-    public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive){
+/*    public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive){
         this();
         this.name = name;
         this.priceCategory = priceCategory;
         this.averageRating = averageRating;
         this.tags = tags;
         this.isActive = isActive;
-    }
+    }*/
 
     @Override
     public String toString() {
