@@ -180,6 +180,7 @@ public class RestaurantControllerTest {
     }
 
     @Test
+    @DisplayName("Should change the Restaurant isActive Status to zero")
     void setRestaurantToInActive() throws Exception {
 
         Restaurant restaurant1 = new Restaurant("Pizza town",

@@ -1,9 +1,9 @@
-package com.xsushirollx.sushibyte.restaurantservice.model;
-
+package com.xsushirollx.sushibyte.restaurantservice.dto;
 
 
 import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -11,48 +11,39 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
 
-@Entity
-@Table(name="food")
 @Component
-public class Food {
+public class FoodDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
-    @Column(name="restaurant_id")
+    @NotNull
     private Integer restaurantID;
 
-    @Column(name="name")
+    @NotNull
+    @Size(max=50)
     private String name;
 
-    @Column(name="cost")
+    @NotNull
     private Double cost;
 
-//    @Column(name="image")
-//    private SerialBlob image;
-
-    @Lob
-    @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
 
-    @Column(name="summary")
+    @Size(max=100)
     private String summary;
 
-    @Column(name="special")
     private Integer special;
 
-    @Column(name="is_active")
+    @Max(1)
     private Integer isActive;
 
-    @Column(name="category")
+    @Max(5)
+    @Min(1)
     private Integer category;
 
-    public Food(){};
+    public FoodDTO(){};
 
-    public Food(Integer restaurantID, String name, Double cost, String image, String summary, Integer special,
-                Integer isActive, Integer category){
+    public FoodDTO(Integer restaurantID, String name, Double cost, String image, String summary, Integer special,
+                   Integer isActive, Integer category){
         this();
         this.restaurantID = restaurantID;
         this.name = name;
@@ -78,7 +69,7 @@ public class Food {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Food food = (Food) o;
+        FoodDTO food = (FoodDTO) o;
         return Objects.equals(restaurantID, food.restaurantID) && Objects.equals(name, food.name);
     }
 
