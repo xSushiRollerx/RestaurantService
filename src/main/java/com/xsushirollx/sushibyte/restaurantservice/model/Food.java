@@ -30,9 +30,6 @@ public class Food {
     @Column(name="cost")
     private Double cost;
 
-//    @Column(name="image")
-//    private SerialBlob image;
-
     @Lob
     @Column(columnDefinition = "MEDIUMBLOB")
     private String image;
