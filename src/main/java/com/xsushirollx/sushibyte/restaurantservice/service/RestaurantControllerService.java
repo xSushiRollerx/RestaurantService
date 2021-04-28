@@ -1,51 +1,43 @@
-package com.xsushirollx.sushibyte.restaurantservice.controller;
+package com.xsushirollx.sushibyte.restaurantservice.service;
 
 import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
-import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantControllerService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
-@RestController()
-@RequestMapping(value = "/restaurant")
-public class RestaurantController {
+@Component
+public class RestaurantControllerService {
+
+    private final RestaurantRepository repository;
 
 
-//    private final RestaurantRepository repository;
-    private final RestaurantControllerService restaurantControllerService;
-
-    public RestaurantController(/*RestaurantRepository repository,*/ RestaurantControllerService restaurantControllerService) {
-//        this.repository = repository;
-        this.restaurantControllerService = restaurantControllerService;
+    public RestaurantControllerService(RestaurantRepository repository) {
+        this.repository = repository;
     }
 
 
-    @GetMapping
-    ResponseEntity<List<Restaurant>> getAllRestaurants() {
+   public ResponseEntity<List<Restaurant>> getAllRestaurants() {
 
-//        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
-        return restaurantControllerService.getAllRestaurants();
+        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
 
-    @GetMapping("/{id}")
-    ResponseEntity<Restaurant> getOneRestaurant(@PathVariable Long id) {
-//        return new ResponseEntity<>(repository.findById(id).
-//                orElseThrow(() -> new RestaurantNotFoundException(id)), HttpStatus.OK);
-        return restaurantControllerService.getOneRestaurant(id);
-
+   public ResponseEntity<Restaurant> getOneRestaurant(Long id) {
+        return new ResponseEntity<>(repository.findById(id).
+                orElseThrow(() -> new RestaurantNotFoundException(id)), HttpStatus.OK);
     }
 
-    @PostMapping
-    ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
-/*        Restaurant restaurantToBeAdded = new Restaurant(newRestaurant.getName(),
+
+   public ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
+        Restaurant restaurantToBeAdded = new Restaurant(newRestaurant.getName(),
                 newRestaurant.getPriceCategory(), newRestaurant.getAverageRating(),
                 newRestaurant.getTags(), newRestaurant.getIsActive(),
                 newRestaurant.getStreetAddress(), newRestaurant.getCity(),
@@ -72,17 +64,15 @@ public class RestaurantController {
                 //need to add an additional error message
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        }*/
-
-        return restaurantControllerService.addNewRestaurant(newRestaurant);
+        }
     }
 
 
-    @PutMapping("/{id}")
-    ResponseEntity<Restaurant> updateRestaurant(@RequestBody RestaurantDTO newRestaurant,
+
+   public ResponseEntity<Restaurant> updateRestaurant(@RequestBody RestaurantDTO newRestaurant,
                                                 @PathVariable Long id) {
 
-/*        return new ResponseEntity<>(repository.findById(id).map(
+        return new ResponseEntity<>(repository.findById(id).map(
                 restaurant -> {
                     if (newRestaurant.getName() != null) restaurant.setName(newRestaurant.getName());
                     if (newRestaurant.getAverageRating() != null)
@@ -100,14 +90,12 @@ public class RestaurantController {
                 })
                 .orElseThrow(() ->
                         new RestaurantNotFoundException(id)),
-                HttpStatus.OK);*/
-        return restaurantControllerService.updateRestaurant(newRestaurant,id);
+                HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
 
-    ResponseEntity<Restaurant> setRestaurantToInActive(@PathVariable Long id) {
-/*        ResponseEntity<Restaurant> inActiveRestaurant = getOneRestaurant(id);
+   public ResponseEntity<Restaurant> setRestaurantToInActive(@PathVariable Long id) {
+        ResponseEntity<Restaurant> inActiveRestaurant = getOneRestaurant(id);
         if (inActiveRestaurant != null) {
             repository.setInactiveById(id);
 
@@ -118,8 +106,7 @@ public class RestaurantController {
                 return new ResponseEntity(inActiveRestaurant, HttpStatus.NOT_FOUND);
             }
         }
-        return new ResponseEntity(getOneRestaurant(id), HttpStatus.OK);*/
-        return restaurantControllerService.setRestaurantToInActive(id);
+        return new ResponseEntity(getOneRestaurant(id), HttpStatus.OK);
     }
 
 }

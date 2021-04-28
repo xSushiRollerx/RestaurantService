@@ -1,70 +1,62 @@
-package com.xsushirollx.sushibyte.restaurantservice.controller;
+package com.xsushirollx.sushibyte.restaurantservice.service;
 
 
+import com.xsushirollx.sushibyte.restaurantservice.controller.RestaurantController;
 import com.xsushirollx.sushibyte.restaurantservice.dao.FoodRepository;
+import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
-import com.xsushirollx.sushibyte.restaurantservice.service.FoodControllerService;
-import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
-import com.xsushirollx.sushibyte.restaurantservice.service.ImageService;
-import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantControllerService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
-@RestController
-@RequestMapping(value = "/food")
-public class FoodController {
+@Component
+public class FoodControllerService {
 
 
-//    private final FoodRepository repository;
-//    private final RestaurantRepository restaurantRepository;
+    private final FoodRepository repository;
+    private final RestaurantRepository restaurantRepository;
     private final RestaurantControllerService restaurantControllerService;
-    private final FoodControllerService foodControllerService;
 
 
-    FoodController(/*FoodRepository foodRepository*/ /*, RestaurantRepository resRepository, */
-                   RestaurantControllerService restaurantControllerService,
-                   FoodControllerService foodControllerService) {
-//        this.repository = foodRepository;
-//        this.restaurantRepository = resRepository;
+    FoodControllerService(FoodRepository foodRepository , RestaurantRepository resRepository,
+                          RestaurantControllerService restaurantControllerService) {
+        this.repository = foodRepository;
+        this.restaurantRepository = resRepository;
         this.restaurantControllerService = restaurantControllerService;
-        this.foodControllerService = foodControllerService;
     }
 
 
-    @GetMapping
-    ResponseEntity<List<Food>> getAllFoodMenuItems() {
 
-//        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
-        return foodControllerService.getAllFoodMenuItems();
+   public ResponseEntity<List<Food>> getAllFoodMenuItems() {
+        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
     }
 
 
-    @GetMapping("/{id}")
-    ResponseEntity<Food> getOneFoodMenuItem(@PathVariable Long id) {
-/*        return new ResponseEntity<Food>(repository.findById(id).
-                orElseThrow(() -> new FoodNotFoundException(id)), HttpStatus.OK);*/
-        return foodControllerService.getOneFoodMenuItem(id);
+
+   public ResponseEntity<Food> getOneFoodMenuItem(@PathVariable Long id) {
+        return new ResponseEntity<Food>(repository.findById(id).
+                orElseThrow(() -> new FoodNotFoundException(id)), HttpStatus.OK);
 
     }
 
-    @PostMapping
-    ResponseEntity<?> addNewFoodMenuItem(@RequestBody FoodDTO newFood) {
-/*        *//*    ResponseEntity<Food> addNewFoodMenuItem(*//**//*@RequestParam("restaurantID") Integer id,*//**//*
+
+   public ResponseEntity<?> addNewFoodMenuItem(@RequestBody FoodDTO newFood) {
+        /*    ResponseEntity<Food> addNewFoodMenuItem(*//*@RequestParam("restaurantID") Integer id,*//*
                                             @RequestPart("name") String name,
                                             @RequestPart("cost") Double cost,
                                             @RequestPart("image") MultipartFile image,
                                             @RequestPart("summary") String summary,
                                             @RequestPart("special") Integer special,
                                             @RequestPart("isActive") Integer isActive,
-                                            @RequestPart("category") Integer category) {*//*
+                                            @RequestPart("category") Integer category) {*/
 
         FoodService foodService = new FoodService();
         MultipartFile image = new ImageService(newFood.getImage());
@@ -96,18 +88,17 @@ public class FoodController {
             } catch (Exception ex) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-        }*/
-
-        return foodControllerService.addNewFoodMenuItem(newFood);
+        }
     }
 
-    @PutMapping("/{id}")
-    ResponseEntity<Food> updateFood(@RequestBody FoodDTO newFood, @PathVariable Long id) {
-/*//        RestaurantController restaurantExistsController = new RestaurantController(restaurantRepository, restaurantControllerService);
-        RestaurantController restaurantExistsController = new RestaurantController(restaurantControllerService);
+
+   public ResponseEntity<Food> updateFood(@RequestBody FoodDTO newFood, @PathVariable Long id) {
+//        RestaurantController restaurantExistsController = new RestaurantController(restaurantRepository, restaurantControllerService);
+//        RestaurantController restaurantExistsController = new RestaurantController(restaurantControllerService);
+        RestaurantControllerService restaurantExistsControllerService = new RestaurantControllerService(restaurantRepository);
         FoodService foodService = new FoodService();
         //Checking to see if corresponding Restaurant exists
-        if (restaurantExistsController.
+        if (restaurantExistsControllerService.
                 getOneRestaurant(newFood.getRestaurantID().longValue()) != null) {
 
             return new ResponseEntity<>(repository.findById(id).map(
@@ -131,14 +122,12 @@ public class FoodController {
                     .orElseThrow(() ->
                             new FoodNotFoundException(id)),
                     HttpStatus.OK);
-        } else throw new RestaurantNotFoundException(id);*/
-        return foodControllerService.updateFood(newFood,id);
+        } else throw new RestaurantNotFoundException(id);
     }
 
 
-    @DeleteMapping("/{id}")
-    ResponseEntity<Food> setFoodMenuItemToInActive(@PathVariable Long id) {
-/*        ResponseEntity<Food> inActiveFoodMenuItem = getOneFoodMenuItem(id);
+   public ResponseEntity<Food> setFoodMenuItemToInActive(@PathVariable Long id) {
+        ResponseEntity<Food> inActiveFoodMenuItem = getOneFoodMenuItem(id);
         if (inActiveFoodMenuItem != null) {
             repository.setInactiveById(id);
 
@@ -149,8 +138,7 @@ public class FoodController {
                 return new ResponseEntity(inActiveFoodMenuItem, HttpStatus.NOT_FOUND);
             }
         }
-        return new ResponseEntity(getOneFoodMenuItem(id), HttpStatus.OK);*/
-        return foodControllerService.setFoodMenuItemToInActive(id);
+        return new ResponseEntity(getOneFoodMenuItem(id), HttpStatus.OK);
     }
 
 }

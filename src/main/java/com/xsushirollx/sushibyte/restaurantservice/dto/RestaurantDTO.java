@@ -1,53 +1,54 @@
-package com.xsushirollx.sushibyte.restaurantservice.model;
+package com.xsushirollx.sushibyte.restaurantservice.dto;
 
 import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
+
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Objects;
 
 
-@Entity
-@Table(name="restaurant")
 @Component
-public class Restaurant {
+public class RestaurantDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name="id")
     private Long id;
 
-    @Column(name = "name")
+    @NotNull
+    @Size(min=2, max=20)
     private String name;
 
-    @Column(name="average_rating")
+    @Max(5)
     private Double averageRating;
 
-    @Column(name="tags")
+    @Size(max=100)
     private String tags;
 
-    @Column(name="is_active")
+    @Max(1)
     private Integer isActive;
 
-    @Column(name = "price_category")
+    @NotNull
+    @Min(1)
+    @Max(5)
     private Integer priceCategory;
 
-    @Column(name="street_address")
+    @Size(max=50)
     private String streetAddress;
 
-    @Column(name="city")
+    @Size(max=45)
     private String city;
 
-    @Column(name="state")
+    @Size(max=2)
     private String state;
 
-    @Column(name="zip_code")
     private Integer zipCode;
 
-    public Restaurant(){};
+    public RestaurantDTO(){};
 
-    public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
-                      String streetAddress, String city, String state, Integer zipCode){
+    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
+                         String streetAddress, String city, String state, Integer zipCode){
         this();
         this.name = name;
         this.priceCategory = priceCategory;
@@ -80,7 +81,7 @@ public class Restaurant {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Restaurant that = (Restaurant) o;
+        RestaurantDTO that = (RestaurantDTO) o;
         return Objects.equals(name, that.name) && Objects.equals(streetAddress,
                 that.streetAddress) && Objects.equals(city, that.city) &&
                 Objects.equals(state, that.state) && Objects.equals(zipCode, that.zipCode);
