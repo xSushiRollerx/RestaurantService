@@ -1,6 +1,6 @@
 package com.xsushirollx.sushibyte.restaurantservice.service;
 
-import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
+import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
@@ -14,12 +14,12 @@ import javax.validation.ConstraintViolationException;
 import java.util.List;
 
 @Component
-public class RestaurantControllerService {
+public class RestaurantService {
 
-    private final RestaurantRepository repository;
+    private final RestaurantDAO repository;
 
 
-    public RestaurantControllerService(RestaurantRepository repository) {
+    public RestaurantService(RestaurantDAO repository) {
         this.repository = repository;
     }
 

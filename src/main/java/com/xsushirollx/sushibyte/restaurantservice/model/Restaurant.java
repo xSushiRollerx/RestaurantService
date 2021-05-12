@@ -1,9 +1,7 @@
 package com.xsushirollx.sushibyte.restaurantservice.model;
 
-import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
 import javax.persistence.*;
-import javax.validation.constraints.*;
 import java.util.Objects;
 
 
@@ -120,10 +118,7 @@ public class Restaurant {
     }
 
     public void setAverageRating(Double averageRating) {
-        if (averageRating != null) {
-            Helper help = new Helper();
-            this.averageRating = help.roundTwoPlaces(averageRating, 2d);
-        }
+            this.averageRating = averageRating;
     }
 
     public String getTags() {

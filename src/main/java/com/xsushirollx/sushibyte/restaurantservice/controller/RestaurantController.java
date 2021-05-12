@@ -1,10 +1,10 @@
 package com.xsushirollx.sushibyte.restaurantservice.controller;
 
-import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
+import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
-import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantControllerService;
+import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,9 +19,9 @@ public class RestaurantController {
 
 
 //    private final RestaurantRepository repository;
-    private final RestaurantControllerService restaurantControllerService;
+    private final RestaurantService restaurantControllerService;
 
-    public RestaurantController(/*RestaurantRepository repository,*/ RestaurantControllerService restaurantControllerService) {
+    public RestaurantController(/*RestaurantRepository repository,*/ RestaurantService restaurantControllerService) {
 //        this.repository = repository;
         this.restaurantControllerService = restaurantControllerService;
     }

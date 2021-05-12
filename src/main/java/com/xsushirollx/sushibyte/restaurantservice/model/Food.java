@@ -1,15 +1,10 @@
 package com.xsushirollx.sushibyte.restaurantservice.model;
 
-
-
-import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
-import javax.persistence.*;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+
 import java.util.Objects;
+
+import javax.persistence.*;
 
 @Entity
 @Table(name="food")
@@ -113,10 +108,7 @@ public class Food {
     }
 
     public void setCost(Double cost) {
-        if(cost !=null) {
-            Helper help = new Helper();
-            this.cost = help.roundTwoPlaces(cost, 2d);
-        }
+            this.cost = cost;
     }
 
 //    public SerialBlob getImage() {

@@ -1,9 +1,7 @@
 package com.xsushirollx.sushibyte.restaurantservice.dto;
 
-import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -121,10 +119,7 @@ public class RestaurantDTO {
     }
 
     public void setAverageRating(Double averageRating) {
-        if (averageRating != null) {
-            Helper help = new Helper();
-            this.averageRating = help.roundTwoPlaces(averageRating, 2d);
-        }
+            this.averageRating = averageRating;
     }
 
     public String getTags() {

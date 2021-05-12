@@ -1,7 +1,5 @@
 package com.xsushirollx.sushibyte.restaurantservice.dto;
 
-
-import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.*;
@@ -107,10 +105,7 @@ public class FoodDTO {
     }
 
     public void setCost(Double cost) {
-        if(cost !=null) {
-            Helper help = new Helper();
-            this.cost = help.roundTwoPlaces(cost, 2d);
-        }
+            this.cost = cost;
     }
 
 //    public SerialBlob getImage() {

@@ -1,21 +1,23 @@
 package com.xsushirollx.sushibyte.restaurantservice.controller;
 
 
-import com.xsushirollx.sushibyte.restaurantservice.dao.FoodRepository;
-import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
-import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
-import com.xsushirollx.sushibyte.restaurantservice.model.Food;
-import com.xsushirollx.sushibyte.restaurantservice.service.FoodControllerService;
-import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
-import com.xsushirollx.sushibyte.restaurantservice.service.ImageService;
-import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantControllerService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.ConstraintViolationException;
 import java.util.List;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.model.Food;
+import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
+import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
 
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
@@ -25,13 +27,13 @@ public class FoodController {
 
 //    private final FoodRepository repository;
 //    private final RestaurantRepository restaurantRepository;
-    private final RestaurantControllerService restaurantControllerService;
-    private final FoodControllerService foodControllerService;
+    private final RestaurantService restaurantControllerService;
+    private final FoodService foodControllerService;
 
 
     FoodController(/*FoodRepository foodRepository*/ /*, RestaurantRepository resRepository, */
-                   RestaurantControllerService restaurantControllerService,
-                   FoodControllerService foodControllerService) {
+                   RestaurantService restaurantControllerService,
+                   FoodService foodControllerService) {
 //        this.repository = foodRepository;
 //        this.restaurantRepository = resRepository;
         this.restaurantControllerService = restaurantControllerService;
