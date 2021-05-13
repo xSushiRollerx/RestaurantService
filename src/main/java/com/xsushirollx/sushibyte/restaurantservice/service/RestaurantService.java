@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -31,7 +32,7 @@ public class RestaurantService {
 		return r.isPresent() ? new RestaurantDTO(r.get()) : null;
 	}
 
-	public boolean addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
+	public boolean addNewRestaurant(RestaurantDTO newRestaurant) {
 		Restaurant restaurantToBeAdded = new Restaurant(newRestaurant);
 
 		boolean duplicateRestaurantCheck = repository.existsByNameAndStreetAddressAndCityAndStateAndZipCode(
@@ -66,6 +67,10 @@ public class RestaurantService {
 
 	}
 
+	public List<RestaurantDTO> search(Map<String, String> params, String[] keywords) {
+		return dataTransfer(relevance(findByKeywords(keywords, params.get("authority"), Integer.parseInt(params.get("page"))), keywords));
+	}
+	
 	public List<Restaurant> findByKeywords(String[] keywords, String authority, Integer page) {
 		String regex = "";
 		for (String k : keywords) {
@@ -117,8 +122,8 @@ public class RestaurantService {
 	}
 
 	public List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
+		log.entering("RestaurantService", "dataTransfer");
 		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
-
 	}
 
 }
