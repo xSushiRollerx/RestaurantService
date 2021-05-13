@@ -5,7 +5,6 @@ import org.springframework.stereotype.Component;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 
 import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.Objects;
@@ -16,7 +15,7 @@ public class FoodDTO {
     private Long id;
 
     @NotNull
-    private Integer restaurantID;
+    private Long restaurantID;
 
     @NotNull
     @Size(max=50)
@@ -35,9 +34,8 @@ public class FoodDTO {
     @Max(1)
     private Integer isActive;
 
-    @Max(5)
-    @Min(1)
-    private Integer category;
+   
+    private String category;
 
     public FoodDTO(){};
     
@@ -52,8 +50,8 @@ public class FoodDTO {
         this.category = food.getCategory();
     }
 
-    public FoodDTO(Integer restaurantID, String name, Double cost, String image, String summary, Integer special,
-                   Integer isActive, Integer category){
+    public FoodDTO(Long restaurantID, String name, Double cost, String image, String summary, Integer special,
+                   Integer isActive, String category){
         this();
         this.restaurantID = restaurantID;
         this.name = name;
@@ -65,13 +63,13 @@ public class FoodDTO {
         this.category = category;
     }
 
-    public Integer getCategory() {
+    public String getCategory() {
         return category;
     }
 
 
 
-    public void setCategory(Integer category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -96,11 +94,11 @@ public class FoodDTO {
         this.id = id;
     }
 
-    public Integer getRestaurantID() {
+    public Long getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(Integer restaurantID) {
+    public void setRestaurantID(Long restaurantID) {
         this.restaurantID = restaurantID;
     }
 

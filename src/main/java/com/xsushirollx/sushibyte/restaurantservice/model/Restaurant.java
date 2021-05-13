@@ -1,18 +1,16 @@
 package com.xsushirollx.sushibyte.restaurantservice.model;
 
-import org.springframework.stereotype.Component;
-
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name = "restaurant")
-@Component
 public class Restaurant {
 
 	@Id
@@ -29,6 +27,8 @@ public class Restaurant {
 	@Column(name = "tags")
 	private String tags;
 
+	@Max(value = 1)
+	@Min(value = 0)
 	@Column(name = "is_active")
 	private Integer isActive;
 
@@ -72,7 +72,7 @@ public class Restaurant {
 	}
 
 	public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
-			String streetAddress, String city, String state, Integer zipCode, Double relevance) {
+			String streetAddress, String city, String state, Integer zipCode) {
 		this();
 		this.name = name;
 		this.priceCategory = priceCategory;
@@ -83,7 +83,6 @@ public class Restaurant {
 		this.city = city;
 		this.state = state;
 		this.zipCode = zipCode;
-		this.relevance = relevance;
 		
 	}
 
@@ -93,23 +92,6 @@ public class Restaurant {
 				+ tags + '\'' + ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress='"
 				+ streetAddress + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", zipCode=" + zipCode
 				+ '}';
-	}
-
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-		Restaurant that = (Restaurant) o;
-		return Objects.equals(name, that.name) && Objects.equals(streetAddress, that.streetAddress)
-				&& Objects.equals(city, that.city) && Objects.equals(state, that.state)
-				&& Objects.equals(zipCode, that.zipCode);
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
 	}
 
 	public Long getId() {
@@ -213,5 +195,31 @@ public class Restaurant {
 	public void setRelevance(Double relevance) {
 		this.relevance = relevance;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Restaurant other = (Restaurant) obj;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		return true;
+	}
+	
 	
 }

@@ -38,8 +38,8 @@ public class RestaurantService {
 				restaurantToBeAdded.getName(), restaurantToBeAdded.getStreetAddress(), restaurantToBeAdded.getCity(),
 				restaurantToBeAdded.getState(), restaurantToBeAdded.getZipCode());
 
-		if (duplicateRestaurantCheck) {
-			repository.save(restaurantToBeAdded);
+		if (!duplicateRestaurantCheck) {
+			repository.saveAndFlush(restaurantToBeAdded);
 			return true;
 		} else {
 			return false;
@@ -56,21 +56,15 @@ public class RestaurantService {
 	}
 
 	public boolean setRestaurantToInActive(Long id) {
-		try {
-			Restaurant inActiveRestaurant = repository.findById(id).get();
-			repository.save(inActiveRestaurant);
+			repository.setInactiveById(id);
 			return true;
-		} catch (NullPointerException e) {
-			return false;
-		}
-
 	}
 
 	public List<RestaurantDTO> search(Map<String, String> params, String[] keywords) {
 		return dataTransfer(relevance(findByKeywords(keywords, params.get("authority"), Integer.parseInt(params.get("page"))), keywords));
 	}
 	
-	public List<Restaurant> findByKeywords(String[] keywords, String authority, Integer page) {
+	private List<Restaurant> findByKeywords(String[] keywords, String authority, Integer page) {
 		String regex = "";
 		for (String k : keywords) {
 			regex += "|" + k;
@@ -85,14 +79,14 @@ public class RestaurantService {
 
 		} else if (authority.equals("ADMINISTRATOR")) {
 
-			return repository.findByKeywords(regex.substring(1), "1 or 2", PageRequest.of(page, 250));
+			return repository.findByKeywords(regex.substring(1), "1 or 0", PageRequest.of(page, 250));
 
 		} else {
 			return null;
 		}
 	}
 
-	public List<Restaurant> relevance(List<Restaurant> restaurants, String[] keywords) {
+	private List<Restaurant> relevance(List<Restaurant> restaurants, String[] keywords) {
 		return Arrays.asList(restaurants.parallelStream().map(r -> {
 
 			for (String k : keywords) {
@@ -120,7 +114,7 @@ public class RestaurantService {
 
 	}
 
-	public List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
+	private List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
 		log.entering("RestaurantService", "dataTransfer");
 		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 	}

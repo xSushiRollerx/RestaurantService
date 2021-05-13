@@ -22,7 +22,7 @@ public class Food {
     private Long id;
 
     @Column(name="restaurant_id")
-    private Integer restaurantID;
+    private Long restaurantID;
 
     @Column(name="name")
     private String name;
@@ -40,7 +40,7 @@ public class Food {
     private Integer isActive;
 
     @Column(name="category")
-    private Integer category;
+    private String category;
 
     public Food(){};
     
@@ -54,8 +54,8 @@ public class Food {
         this.category = food.getCategory();
     }
 
-    public Food(Integer restaurantID, String name, Double cost, String summary, Integer special,
-                Integer isActive, Integer category){
+    public Food(Long restaurantID, String name, Double cost, String summary, Integer special,
+                Integer isActive, String category){
         this();
         this.restaurantID = restaurantID;
         this.name = name;
@@ -66,13 +66,13 @@ public class Food {
         this.category = category;
     }
 
-    public Integer getCategory() {
+    public String getCategory() {
         return category;
     }
 
 
 
-    public void setCategory(Integer category) {
+    public void setCategory(String category) {
         this.category = category;
     }
 
@@ -97,11 +97,11 @@ public class Food {
         this.id = id;
     }
 
-    public Integer getRestaurantID() {
+    public Long getRestaurantID() {
         return restaurantID;
     }
 
-    public void setRestaurantID(Integer restaurantID) {
+    public void setRestaurantID(Long restaurantID) {
         this.restaurantID = restaurantID;
     }
 
@@ -151,7 +151,10 @@ public class Food {
         }
     }
 
-
-
+	@Override
+	public String toString() {
+		return "Food [id=" + id + ", restaurantID=" + restaurantID + ", name=" + name + ", cost=" + cost + ", summary="
+				+ summary + ", isActive=" + isActive + ", category=" + category + "]";
+	}
 
 }

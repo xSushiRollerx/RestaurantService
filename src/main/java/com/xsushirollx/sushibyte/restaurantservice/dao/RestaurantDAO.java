@@ -30,8 +30,8 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
-			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = :active) group by restaurant.id", nativeQuery = true)
-	List<Restaurant> findByKeywords(@Param("keywords") String keywords, @Param("active") String active, Pageable pageRequest);
+			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) group by restaurant.id", nativeQuery = true)
+	List<Restaurant> findByKeywords(@Param("keywords") String keywords, @Param("active") Integer active, Pageable pageRequest);
 
 	Boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
 			String state, Integer zipCode);
