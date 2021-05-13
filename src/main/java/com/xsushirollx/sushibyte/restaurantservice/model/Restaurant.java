@@ -47,12 +47,12 @@ public class Restaurant {
 	@Column(name = "zip_code")
 	private Integer zipCode;
 	
-	@OneToMany
+	@OneToMany(fetch = FetchType.EAGER)
 	@JoinColumn(name = "restaurant_id")
 	private List<Food> menu;
 
 	@Transient
-	private Double relevance;
+	private Double relevance = (double) 0;
 	
 	public Restaurant() {
 	};
@@ -68,7 +68,10 @@ public class Restaurant {
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
 		this.relevance = restaurant.getRelevance();
-		this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new Food(m)).toArray(Food[]::new)));
+		
+		if (restaurant.getMenu() != null) {
+			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new Food(m)).toArray(Food[]::new)));
+		}
 	}
 
 	public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
@@ -84,14 +87,6 @@ public class Restaurant {
 		this.state = state;
 		this.zipCode = zipCode;
 		
-	}
-
-	@Override
-	public String toString() {
-		return "Restaurant{" + "id=" + id + ", name='" + name + '\'' + ", averageRating=" + averageRating + ", tags='"
-				+ tags + '\'' + ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress='"
-				+ streetAddress + '\'' + ", city='" + city + '\'' + ", state='" + state + '\'' + ", zipCode=" + zipCode
-				+ '}';
 	}
 
 	public Long getId() {
@@ -220,6 +215,16 @@ public class Restaurant {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Restaurant [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
+				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
+				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", menu=" + menu + ", relevance="
+				+ relevance + "]";
+	}
+	
+	
 	
 	
 }

@@ -50,11 +50,12 @@ public class RestaurantDTO {
     
     private List<FoodDTO> menu;
     
-    private Double relevance;
+    private Double relevance = (double) 0;
 
     public RestaurantDTO(){};
     
     public RestaurantDTO(Restaurant restaurant) {
+    	this.id = restaurant.getId();
     	this.name = restaurant.getName();
 		this.priceCategory = restaurant.getPriceCategory();
 		this.averageRating = restaurant.getAverageRating();
@@ -65,9 +66,10 @@ public class RestaurantDTO {
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
 		this.relevance = restaurant.getRelevance();
-		this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
 		
-		
+		if (restaurant.getMenu() != null) {
+			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
+		}
     }
 
     public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
@@ -83,22 +85,6 @@ public class RestaurantDTO {
         this.state = state;
         this.zipCode = zipCode;
         this.relevance = relevance;
-    }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", averageRating=" + averageRating +
-                ", tags='" + tags + '\'' +
-                ", isActive=" + isActive +
-                ", priceCategory=" + priceCategory +
-                ", streetAddress='" + streetAddress + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zipCode=" + zipCode +
-                '}';
     }
 
     @Override
@@ -219,5 +205,15 @@ public class RestaurantDTO {
 	public void setRelevance(Double  relevance) {
 		this.relevance = relevance;
 	}
+
+	@Override
+	public String toString() {
+		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
+				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
+				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", menu=" + menu + ", relevance="
+				+ relevance + "]";
+	}
+	
+	
 
 }

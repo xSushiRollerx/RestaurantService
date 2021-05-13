@@ -75,11 +75,11 @@ public class RestaurantService {
 
 		if (authority.equals("CUSTOMER")) {
 
-			return repository.findByKeywords(regex.substring(1), "1", PageRequest.of(page, 250));
+			return repository.findByKeywords(regex.substring(1), 1, PageRequest.of(page, 250));
 
 		} else if (authority.equals("ADMINISTRATOR")) {
 
-			return repository.findByKeywords(regex.substring(1), "1 or 0", PageRequest.of(page, 250));
+			return repository.findByKeywords(regex.substring(1), 0, PageRequest.of(page, 250));
 
 		} else {
 			return null;
@@ -90,20 +90,23 @@ public class RestaurantService {
 		return Arrays.asList(restaurants.parallelStream().map(r -> {
 
 			for (String k : keywords) {
-				if (r.getName().contains(k)) {
+				k = k.toLowerCase();
+				if (r.getName().toLowerCase().contains(k)) {
 					r.setRelevance(r.getRelevance() + 1);
 				}
 
-				if (r.getTags().contains(k)) {
+				if (r.getTags().toLowerCase().contains(k)) {
 					r.setRelevance(r.getRelevance() + 2.5);
 				}
 
+
 				for (int i = 0; i < r.getMenu().size(); i++) {
-					if (r.getMenu().get(i).getName().contains(k)) {
+					if (r.getMenu().get(i).getName().toLowerCase().contains(k)) {
+						log.info("Restaurant Relevance: " + r.toString());
 						r.setRelevance(r.getRelevance() + 1);
 					}
 
-					if (r.getMenu().get(i).getSummary().contains(k)) {
+					if (r.getMenu().get(i).getSummary().toLowerCase().contains(k)) {
 						r.setRelevance(r.getRelevance() + 1.25);
 					}
 
