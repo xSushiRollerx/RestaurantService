@@ -1,6 +1,8 @@
 package com.xsushirollx.sushibyte.restaurantservice.dao;
 
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
+
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +31,7 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
 			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = :active) group by restaurant.id", nativeQuery = true)
-	List<Restaurant> findByKeyword(@Param("keywords") String keywords, @Param("active") String active);
+	List<Restaurant> findByKeywords(@Param("keywords") String keywords, @Param("active") String active, Pageable pageRequest);
 
 	Boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
 			String state, Integer zipCode);

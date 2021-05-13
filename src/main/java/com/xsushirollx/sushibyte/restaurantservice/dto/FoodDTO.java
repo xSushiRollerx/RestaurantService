@@ -2,6 +2,8 @@ package com.xsushirollx.sushibyte.restaurantservice.dto;
 
 import org.springframework.stereotype.Component;
 
+import com.xsushirollx.sushibyte.restaurantservice.model.Food;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -38,6 +40,17 @@ public class FoodDTO {
     private Integer category;
 
     public FoodDTO(){};
+    
+    public FoodDTO(Food food) {
+    	this.id = food.getId();
+    	this.restaurantID = food.getRestaurantID();
+        this.name = food.getName();
+        this.cost = food.getCost();
+        this.summary = food.getSummary();
+        this.special = food.getSpecial();
+        this.isActive = food.getIsActive();
+        this.category = food.getCategory();
+    }
 
     public FoodDTO(Integer restaurantID, String name, Double cost, String image, String summary, Integer special,
                    Integer isActive, Integer category){
@@ -106,14 +119,6 @@ public class FoodDTO {
     public void setCost(Double cost) {
             this.cost = cost;
     }
-
-//    public SerialBlob getImage() {
-//        return image;
-//    }
-//
-//    public void setImage(SerialBlob image) {
-//        this.image = image;
-//    }
 
     public String getImage() {
         return image;

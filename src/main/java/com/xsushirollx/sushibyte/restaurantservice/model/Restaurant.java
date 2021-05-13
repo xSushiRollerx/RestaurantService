@@ -6,6 +6,7 @@ import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 
 import javax.persistence.*;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -50,6 +51,9 @@ public class Restaurant {
 	@JoinColumn(name = "restaurant_id")
 	private List<Food> menu;
 
+	@Transient
+	private Double relevance;
+	
 	public Restaurant() {
 	};
 
@@ -63,10 +67,12 @@ public class Restaurant {
 		this.city = restaurant.getCity();
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
+		this.relevance = restaurant.getRelevance();
+		this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new Food(m)).toArray(Food[]::new)));
 	}
 
 	public Restaurant(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
-			String streetAddress, String city, String state, Integer zipCode) {
+			String streetAddress, String city, String state, Integer zipCode, Double relevance) {
 		this();
 		this.name = name;
 		this.priceCategory = priceCategory;
@@ -77,6 +83,8 @@ public class Restaurant {
 		this.city = city;
 		this.state = state;
 		this.zipCode = zipCode;
+		this.relevance = relevance;
+		
 	}
 
 	@Override
@@ -190,4 +198,20 @@ public class Restaurant {
 		this.zipCode = zipCode;
 	}
 
+	public List<Food> getMenu() {
+		return menu;
+	}
+
+	public void setMenu(List<Food> menu) {
+		this.menu = menu;
+	}
+
+	public Double getRelevance() {
+		return relevance;
+	}
+
+	public void setRelevance(Double relevance) {
+		this.relevance = relevance;
+	}
+	
 }

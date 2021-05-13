@@ -5,11 +5,14 @@ import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 @Service
 public class RestaurantService {
@@ -17,13 +20,15 @@ public class RestaurantService {
 	@Autowired
 	private RestaurantDAO repository;
 
+	private Logger log = Logger.getLogger("RestaurantServiceTests");
+
 	public List<Restaurant> getAllRestaurants() {
 		return repository.findAll();
 	}
 
-	public Restaurant findById(Long id) {
+	public RestaurantDTO findById(Long id) {
 		Optional<Restaurant> r = repository.findById(id);
-		return r.isPresent() ? r.get() : null;
+		return r.isPresent() ? new RestaurantDTO(r.get()) : null;
 	}
 
 	public boolean addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
@@ -51,27 +56,69 @@ public class RestaurantService {
 	}
 
 	public boolean setRestaurantToInActive(Long id) {
-		Restaurant inActiveRestaurant = findById(id);
-		repository.save(inActiveRestaurant);
-		
-		return true;
+		try {
+			Restaurant inActiveRestaurant = repository.findById(id).get();
+			repository.save(inActiveRestaurant);
+			return true;
+		} catch (NullPointerException e) {
+			return false;
+		}
+
 	}
-	
-	
-	public List<Restaurant> findByKeywords(String[] keywords, String authority) {
+
+	public List<Restaurant> findByKeywords(String[] keywords, String authority, Integer page) {
 		String regex = "";
-		for (String k: keywords) {
+		for (String k : keywords) {
 			regex += "|" + k;
 		}
-		
-		//for admin active status shown to it is determined on the frontend
-		if (authority.contentEquals("CUSTOMER")) {
-			return repository.findByKeyword(regex.substring(1), "1");
-		} else if (authority.contentEquals("ADMINISTRATOR")) {
-			return repository.findByKeyword(regex.substring(1), "1 or 2");
+
+		// for admin active status shown to it is determined on the frontend
+		repository.findAll(PageRequest.of(page, 250));
+
+		if (authority.equals("CUSTOMER")) {
+
+			return repository.findByKeywords(regex.substring(1), "1", PageRequest.of(page, 250));
+
+		} else if (authority.equals("ADMINISTRATOR")) {
+
+			return repository.findByKeywords(regex.substring(1), "1 or 2", PageRequest.of(page, 250));
+
 		} else {
 			return null;
 		}
+	}
+
+	public List<Restaurant> relevance(List<Restaurant> restaurants, String[] keywords) {
+		return Arrays.asList(restaurants.parallelStream().map(r -> {
+
+			for (String k : keywords) {
+				if (r.getName().contains(k)) {
+					r.setRelevance(r.getRelevance() + 1);
+				}
+
+				if (r.getTags().contains(k)) {
+					r.setRelevance(r.getRelevance() + 2.5);
+				}
+
+				for (int i = 0; i < r.getMenu().size(); i++) {
+					if (r.getMenu().get(i).getName().contains(k)) {
+						r.setRelevance(r.getRelevance() + 1);
+					}
+
+					if (r.getMenu().get(i).getSummary().contains(k)) {
+						r.setRelevance(r.getRelevance() + 1.25);
+					}
+
+				}
+			}
+			return r;
+		}).toArray(Restaurant[]::new));
+
+	}
+
+	public List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
+		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
+
 	}
 
 }

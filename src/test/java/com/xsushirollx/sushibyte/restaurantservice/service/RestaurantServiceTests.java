@@ -18,6 +18,6 @@ public class RestaurantServiceTests {
 	@Test
 	public void findByKeywords() {
 		String[] keywords = {"queen", "bakery"};
-		log.info(rservice.findByKeywords(keywords, "CUSTOMER").toString());
+		log.info(rservice.findByKeywords(keywords, "CUSTOMER", 0).toString());
 	}
 }
