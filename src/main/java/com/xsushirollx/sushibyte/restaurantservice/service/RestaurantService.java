@@ -7,7 +7,6 @@ import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +22,8 @@ public class RestaurantService {
 
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
-	public List<Restaurant> getAllRestaurants() {
-		return repository.findAll();
+	public List<RestaurantDTO> getAllRestaurants(Integer page) {
+		return  Arrays.asList(repository.findAll(PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 	}
 
 	public RestaurantDTO findById(Long id) {
