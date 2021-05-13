@@ -2,7 +2,6 @@ package com.xsushirollx.sushibyte.restaurantservice.dto;
 
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
