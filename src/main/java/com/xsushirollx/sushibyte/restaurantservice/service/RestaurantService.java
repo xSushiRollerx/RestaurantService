@@ -60,63 +60,26 @@ public class RestaurantService {
 			return true;
 	}
 
-	public List<RestaurantDTO> search(Map<String, String> params, String[] keywords) {
-		return dataTransfer(relevance(findByKeywords(keywords, params.get("authority"), Integer.parseInt(params.get("page"))), keywords));
-	}
-	
-	private List<Restaurant> findByKeywords(String[] keywords, String authority, Integer page) {
+	public List<RestaurantDTO> search(Map<String, String> params, String[] keywords, String authority) {
+		return dataTransfer(sort(params, keywords, Integer.parseInt(authority)));
+	}	
+
+	private List<Restaurant> sort(Map<String, String> params, String[] keywords, Integer active) {
 		String regex = "";
 		for (String k : keywords) {
 			regex += "|" + k;
 		}
-
-		// for admin active status shown to it is determined on the frontend
-		repository.findAll(PageRequest.of(page, 250));
-
-		if (authority.equals("CUSTOMER")) {
-
-			return repository.findByKeywords(regex.substring(1), 1, PageRequest.of(page, 250));
-
-		} else if (authority.equals("ADMINISTRATOR")) {
-
-			return repository.findByKeywords(regex.substring(1), 0, PageRequest.of(page, 250));
-
-		} else {
-			return null;
+		
+		switch(params.get("sort")) {
+		case "alphabetically":
+			return repository.findByKeywordsSortByName(regex.substring(1), active, PageRequest.of(Integer.parseInt(params.get("page")), 250));
+		case "ratings":
+			return repository.findByKeywordsSortByRating(regex.substring(1), active, PageRequest.of(Integer.parseInt(params.get("page")), 250));
+		default:
+			return repository.findByKeywords(regex.substring(1), active, PageRequest.of(Integer.parseInt(params.get("page")), 250));
 		}
 	}
-
-	private List<Restaurant> relevance(List<Restaurant> restaurants, String[] keywords) {
-		return Arrays.asList(restaurants.parallelStream().map(r -> {
-
-			for (String k : keywords) {
-				k = k.toLowerCase();
-				if (r.getName().toLowerCase().contains(k)) {
-					r.setRelevance(r.getRelevance() + 1);
-				}
-
-				if (r.getTags().toLowerCase().contains(k)) {
-					r.setRelevance(r.getRelevance() + 2.5);
-				}
-
-
-				for (int i = 0; i < r.getMenu().size(); i++) {
-					if (r.getMenu().get(i).getName().toLowerCase().contains(k)) {
-						log.info("Restaurant Relevance: " + r.toString());
-						r.setRelevance(r.getRelevance() + 1);
-					}
-
-					if (r.getMenu().get(i).getSummary().toLowerCase().contains(k)) {
-						r.setRelevance(r.getRelevance() + 1.25);
-					}
-
-				}
-			}
-			return r;
-		}).toArray(Restaurant[]::new));
-
-	}
-
+	
 	private List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
 		log.entering("RestaurantService", "dataTransfer");
 		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));

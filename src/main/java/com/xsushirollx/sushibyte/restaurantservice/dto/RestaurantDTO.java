@@ -38,10 +38,8 @@ public class RestaurantDTO {
 
     @Size(max=50)
     private String streetAddress;
-
-
+    
     private String city;
-
 
     private String state;
 

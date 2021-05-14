@@ -15,7 +15,8 @@ public class Restaurant {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", insertable = false)
+	@Column(name = "id"
+	)
 	private Long id;
 
 	@Column(name = "name")
@@ -48,7 +49,7 @@ public class Restaurant {
 	private Integer zipCode;
 	
 	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "restaurant_id", insertable = false, updatable = false)
+	@JoinColumn(name = "restaurant_id")
 	private List<Food> menu;
 
 	@Transient
@@ -216,12 +217,17 @@ public class Restaurant {
 		return true;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "Restaurant [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
+//				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
+//				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", menu=" + menu + ", relevance="
+//				+ relevance + "]";
+//	}
 	@Override
 	public String toString() {
 		return "Restaurant [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
-				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
-				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", menu=" + menu + ", relevance="
-				+ relevance + "]";
+				+ "]";
 	}
 	
 	

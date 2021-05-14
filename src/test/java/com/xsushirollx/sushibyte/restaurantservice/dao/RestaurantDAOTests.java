@@ -131,4 +131,22 @@ public class RestaurantDAOTests {
 		assertEquals(both.size(), 2);
 		
 	}
+	
+	@Test
+	public void findByKeywordsSortByName() {
+		List<Restaurant> results = rdao.findByKeywordsSortByName("american|burrito", 0, PageRequest.of(0, 250)); 
+		log.info("Sort By Name: " + results.toString());
+		for (int i = 1; i < results.size(); i++) {
+			assert(results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
+		}
+	}
+	
+	@Test
+	public void findByKeywordsSortByRating() {
+		List<Restaurant> results = rdao.findByKeywordsSortByRating("american|burrito", 0, PageRequest.of(0, 250)); 
+		log.info("Sort By Name: " + results.toString());
+		for (int i = 1; i < results.size(); i++) {
+			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
+		}
+	}
 }

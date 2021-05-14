@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -149,5 +150,17 @@ public class RestaurantControllerTest {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	@Test
+	public void search200() {
+		when(rservice.search(Mockito.any(Map.class), Mockito.any(String[].class), Mockito.any(String.class))).thenReturn(new ArrayList<RestaurantDTO>());
+		
+		try {
+			mockMvc.perform(get("/restaurant/?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)))
+					.andExpect(status().isOk());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

@@ -124,40 +124,47 @@ public class RestaurantServiceTests {
 		log.entering("RestaurantServiceTests", "searchSecurity");
 
 		Map<String, String> params = new HashMap<>();
-		params.put("authority", "ADMINISTRATOR");
 		params.put("page", "0");
+		params.put("sort", "default");
 		String[] keywords = { "burgers", "tacos", "burritos" };
+		
+		assertEquals(2, rservice.search(params, keywords, "0").size());
 
-		assertEquals(2, rservice.search(params, keywords).size());
-
-		params.replace("authority", "CUSTOMER");
-		assertEquals(1, rservice.search(params, keywords).size());
-
+		assertEquals(1, rservice.search(params, keywords, "1").size());
 	}
-
+	
 	@Test
-	public void searchRelevance() {
+	public void searchByRatings() {
+		log.entering("RestaurantServiceTests", "searchSecurity");
 
 		Map<String, String> params = new HashMap<>();
-		params.put("authority", "ADMINISTRATOR");
 		params.put("page", "0");
-		String[] keywords = { "burger", "burrito"};
-		boolean containsBurger = false;
-		boolean containsCasa = false;
+		params.put("sort", "ratings");
+		String[] keywords = { "burgers", "tacos", "burritos" };
 
-		List<RestaurantDTO> results = rservice.search(params, keywords);
-		for (int i = 0; i < results.size(); i++) {
-			if (results.get(i).getName().equals("Burger Bar")) {
-				containsBurger = true;
-				log.info("Burger Bar Relevance: " + results.get(i).getRelevance());
-			}
-
-			if (results.get(i).getName().equals("Casa Feliz")) {
-				containsCasa = true;
-				log.info("Casa Feliz Relevance: " + results.get(i).getRelevance());
-			}
+		List<RestaurantDTO> results = rservice.search(params, keywords, "0");
+		
+		for (int i = 1; i < results.size(); i++) {
+			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
 		}
-		assert(containsBurger && containsCasa);
+
+	}
+	
+	@Test
+	public void searchByName() {
+		log.entering("RestaurantServiceTests", "searchSecurity");
+
+		Map<String, String> params = new HashMap<>();
+		params.put("page", "0");
+		params.put("sort", "alphabetically");
+		String[] keywords = { "burgers", "tacos", "burritos" };
+
+		List<RestaurantDTO> results = rservice.search(params, keywords, "0");
+		
+		for (int i = 1; i < results.size(); i++) {
+			assert(results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
+		}
+
 	}
 
 }

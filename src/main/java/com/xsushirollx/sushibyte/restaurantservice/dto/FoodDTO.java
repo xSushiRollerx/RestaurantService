@@ -24,8 +24,6 @@ public class FoodDTO {
     @NotNull
     private Double cost;
 
-    private String image;
-
     @Size(max=100)
     private String summary;
 
@@ -50,13 +48,12 @@ public class FoodDTO {
         this.category = food.getCategory();
     }
 
-    public FoodDTO(Long restaurantID, String name, Double cost, String image, String summary, Integer special,
+    public FoodDTO(Long restaurantID, String name, Double cost, String summary, Integer special,
                    Integer isActive, String category){
         this();
         this.restaurantID = restaurantID;
         this.name = name;
         this.cost = cost;
-        this.image = image;
         this.summary = summary;
         this.special = special;
         this.isActive = isActive;
@@ -117,14 +114,6 @@ public class FoodDTO {
     public void setCost(Double cost) {
             this.cost = cost;
     }
-
-    public String getImage() {
-        return image;
-    }
-    public void setImage(String image) {
-        this.image = image;
-    }
-
 
     public String getSummary() {
         return summary;
