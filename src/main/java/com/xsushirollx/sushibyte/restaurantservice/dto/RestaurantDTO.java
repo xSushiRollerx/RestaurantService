@@ -6,7 +6,6 @@ import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import java.util.Arrays;
@@ -19,7 +18,7 @@ public class RestaurantDTO {
 
     private Long id;
 
-    @NotNull
+  
     @Size(min=2, max=20)
     private String name;
 
@@ -32,7 +31,7 @@ public class RestaurantDTO {
     @Max(1)
     private Integer isActive;
 
-    @NotNull
+
     @Min(1)
     @Max(5)
     private Integer priceCategory;
@@ -40,10 +39,10 @@ public class RestaurantDTO {
     @Size(max=50)
     private String streetAddress;
 
-    @Size(max=45)
+
     private String city;
 
-    @Size(max=2)
+
     private String state;
 
     private Integer zipCode;
@@ -85,6 +84,20 @@ public class RestaurantDTO {
         this.state = state;
         this.zipCode = zipCode;
         this.relevance = relevance;
+    }
+    
+    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
+    		Integer zipCode){
+        this();
+        this.name = name;
+        this.priceCategory = priceCategory;
+        this.averageRating = averageRating;
+        this.tags = tags;
+        this.isActive = isActive;
+        this.streetAddress = streetAddress;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
     }
 
     @Override

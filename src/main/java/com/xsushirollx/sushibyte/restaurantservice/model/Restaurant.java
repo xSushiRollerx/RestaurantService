@@ -15,7 +15,7 @@ public class Restaurant {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id")
+	@Column(name = "id", insertable = false)
 	private Long id;
 
 	@Column(name = "name")
@@ -48,7 +48,7 @@ public class Restaurant {
 	private Integer zipCode;
 	
 	@OneToMany(fetch = FetchType.EAGER)
-	@JoinColumn(name = "restaurant_id")
+	@JoinColumn(name = "restaurant_id", insertable = false, updatable = false)
 	private List<Food> menu;
 
 	@Transient
