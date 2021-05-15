@@ -18,5 +18,5 @@ public interface FoodDAO extends JpaRepository<Food, Long> {
     void setInactiveById(@Param("id") Long id);
 
     @Query(value = "select food from Food food where food.name = :name and food.restaurantID = :restaurantID")
-    Food checkForExistingFoodByValues(@Param("restaurantID") Integer restaurantID, @Param("name") String name);
+    Food checkForExistingFoodByValues(@Param("restaurantID") Long id, @Param("name") String name);
 }

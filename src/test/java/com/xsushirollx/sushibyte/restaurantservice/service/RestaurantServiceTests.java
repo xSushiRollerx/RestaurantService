@@ -90,6 +90,25 @@ public class RestaurantServiceTests {
 		}
 
 	}
+	
+	@Test
+	public void getAllRestaurantsSortByName() {
+		List<RestaurantDTO> results = rservice.getAllRestaurants(0, "alphabetically");
+
+		for (int i = 1; i < results.size(); i++) {
+			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
+		}
+	}
+
+	@Test
+	public void getAllRestaurantsSortByRating() {
+		List<RestaurantDTO> results = rservice.getAllRestaurants(0, "ratings");
+		log.info(results.toString());
+		for (int i = 1; i < results.size(); i++) {
+			log.info("Round" + i + " " + (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0 ? "true" : "false"));
+			assert (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0);
+		}
+	}
 
 	@Test
 	public void findById() {
@@ -100,7 +119,7 @@ public class RestaurantServiceTests {
 
 	@Test
 	public void addNewRestaurant() {
-		assert(!rservice.addNewRestaurant(new RestaurantDTO(testRestaurants.get(0))));
+		assert (!rservice.addNewRestaurant(new RestaurantDTO(testRestaurants.get(0))));
 	}
 
 	@Test
@@ -127,12 +146,12 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "default");
 		String[] keywords = { "burgers", "tacos", "burritos" };
-		
+
 		assertEquals(2, rservice.search(params, keywords, "0").size());
 
 		assertEquals(1, rservice.search(params, keywords, "1").size());
 	}
-	
+
 	@Test
 	public void searchByRatings() {
 		log.entering("RestaurantServiceTests", "searchSecurity");
@@ -143,13 +162,13 @@ public class RestaurantServiceTests {
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, keywords, "0");
-		
+
 		for (int i = 1; i < results.size(); i++) {
-			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
+			assert (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
 		}
 
 	}
-	
+
 	@Test
 	public void searchByName() {
 		log.entering("RestaurantServiceTests", "searchSecurity");
@@ -160,9 +179,9 @@ public class RestaurantServiceTests {
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, keywords, "0");
-		
+
 		for (int i = 1; i < results.size(); i++) {
-			assert(results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
+			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
 		}
 
 	}

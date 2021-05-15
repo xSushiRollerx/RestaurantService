@@ -49,5 +49,8 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
 			String state, Integer zipCode);
 
+	@Query(value = "select * from restaurant order by average_rating desc", nativeQuery = true)
+	List<Restaurant> findAllSortByAverageRating(Pageable pageRequest);
+
 	
 }

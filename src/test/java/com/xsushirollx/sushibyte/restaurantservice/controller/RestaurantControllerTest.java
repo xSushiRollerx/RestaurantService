@@ -39,11 +39,11 @@ public class RestaurantControllerTest {
 	RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 	
 	@Test
-	public void getAllRestaurants() {
-		when(rservice.getAllRestaurants(Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
+	public void getAllRestaurants200() {
+		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
-			mockMvc.perform(get("/restaurant/all/page/1").contentType(MediaType.APPLICATION_JSON))
+			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -156,7 +156,7 @@ public class RestaurantControllerTest {
 		when(rservice.search(Mockito.any(Map.class), Mockito.any(String[].class), Mockito.any(String.class))).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
-			mockMvc.perform(get("/restaurant/?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)))
+			mockMvc.perform(get("/restaurants/?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();

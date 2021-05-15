@@ -221,8 +221,7 @@ public class RestaurantDTO {
 	public String toString() {
 		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
 				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
-				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode + ", menu=" + menu + ", relevance="
-				+ relevance + "]";
+				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode +  "]";
 	}
 	
 	

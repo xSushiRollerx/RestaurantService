@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -21,24 +20,24 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 @Controller
-@RequestMapping("/restaurant")
+//@RequestMapping("/restaurant")
 public class RestaurantController {
 	private Logger log = Logger.getLogger("RestaurantController");
 
 	@Autowired
     private RestaurantService restaurantControllerService;
 	
-	@GetMapping(value = "/all/page/{page}")
-    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page) {
+	@GetMapping(value = "/restaurants/all/{page}")
+    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam("sort") String sort) {
     	try {
-    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page), HttpStatus.OK);
+    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, sort), HttpStatus.OK);
     	} catch(Exception e) {
     		e.printStackTrace();
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     	}
     }
 
-    @GetMapping(value = "/{id}")
+    @GetMapping(value = "/restaurant/{id}")
     ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable Long id) {
     	try {
     		RestaurantDTO restaurant =  restaurantControllerService.findById(id);
@@ -55,7 +54,7 @@ public class RestaurantController {
 
     }
 
-    @PostMapping
+    @PostMapping(value = "/restaurant")
     ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
 
     	try {
@@ -73,7 +72,7 @@ public class RestaurantController {
        
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/restaurant/{id}")
     ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO newRestaurant, @PathVariable Long id) {
     	try {
     		if (restaurantControllerService.updateRestaurant(newRestaurant,id)) {
@@ -88,7 +87,7 @@ public class RestaurantController {
     	}
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/restaurant/{id}")
     ResponseEntity<?> setRestaurantToInActive(@PathVariable Long id) {
     	
     	try {
@@ -106,7 +105,7 @@ public class RestaurantController {
         
     }
 
-    @GetMapping("/")
+    @GetMapping("/restaurants/")
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
     		@RequestParam(name = "active", defaultValue = "1") String active)  {
