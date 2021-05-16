@@ -1,13 +1,15 @@
 package com.xsushirollx.sushibyte.restaurantservice.dto;
 
-import com.xsushirollx.sushibyte.restaurantservice.service.Helper;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.*;
+import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
+
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 
@@ -16,7 +18,7 @@ public class RestaurantDTO {
 
     private Long id;
 
-    @NotNull
+  
     @Size(min=2, max=20)
     private String name;
 
@@ -29,26 +31,46 @@ public class RestaurantDTO {
     @Max(1)
     private Integer isActive;
 
-    @NotNull
+
     @Min(1)
     @Max(5)
     private Integer priceCategory;
 
     @Size(max=50)
     private String streetAddress;
-
-    @Size(max=45)
+    
     private String city;
 
-    @Size(max=2)
     private String state;
 
     private Integer zipCode;
+    
+    private List<FoodDTO> menu;
+    
+    private Double relevance = (double) 0;
 
     public RestaurantDTO(){};
+    
+    public RestaurantDTO(Restaurant restaurant) {
+    	this.id = restaurant.getId();
+    	this.name = restaurant.getName();
+		this.priceCategory = restaurant.getPriceCategory();
+		this.averageRating = restaurant.getAverageRating();
+		this.tags = restaurant.getTags();
+		this.isActive = restaurant.getIsActive();
+		this.streetAddress = restaurant.getStreetAddress();
+		this.city = restaurant.getCity();
+		this.state = restaurant.getState();
+		this.zipCode = restaurant.getZipCode();
+		this.relevance = restaurant.getRelevance();
+		
+		if (restaurant.getMenu() != null) {
+			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
+		}
+    }
 
-    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive,
-                         String streetAddress, String city, String state, Integer zipCode){
+    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
+    		Integer zipCode, Double relevance){
         this();
         this.name = name;
         this.priceCategory = priceCategory;
@@ -59,22 +81,21 @@ public class RestaurantDTO {
         this.city = city;
         this.state = state;
         this.zipCode = zipCode;
+        this.relevance = relevance;
     }
-
-    @Override
-    public String toString() {
-        return "Restaurant{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", averageRating=" + averageRating +
-                ", tags='" + tags + '\'' +
-                ", isActive=" + isActive +
-                ", priceCategory=" + priceCategory +
-                ", streetAddress='" + streetAddress + '\'' +
-                ", city='" + city + '\'' +
-                ", state='" + state + '\'' +
-                ", zipCode=" + zipCode +
-                '}';
+    
+    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
+    		Integer zipCode){
+        this();
+        this.name = name;
+        this.priceCategory = priceCategory;
+        this.averageRating = averageRating;
+        this.tags = tags;
+        this.isActive = isActive;
+        this.streetAddress = streetAddress;
+        this.city = city;
+        this.state = state;
+        this.zipCode = zipCode;
     }
 
     @Override
@@ -121,10 +142,7 @@ public class RestaurantDTO {
     }
 
     public void setAverageRating(Double averageRating) {
-        if (averageRating != null) {
-            Helper help = new Helper();
-            this.averageRating = help.roundTwoPlaces(averageRating, 2d);
-        }
+            this.averageRating = averageRating;
     }
 
     public String getTags() {
@@ -182,5 +200,30 @@ public class RestaurantDTO {
     public void setZipCode(Integer zipCode) {
         this.zipCode = zipCode;
     }
+
+	public List<FoodDTO> getMenu() {
+		return menu;
+	}
+
+	public void setMenu(List<FoodDTO> menu) {
+		this.menu = menu;
+	}
+
+	public Double getRelevance() {
+		return relevance;
+	}
+
+	public void setRelevance(Double  relevance) {
+		this.relevance = relevance;
+	}
+
+	@Override
+	public String toString() {
+		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
+				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
+				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode +  "]";
+	}
+	
+	
 
 }

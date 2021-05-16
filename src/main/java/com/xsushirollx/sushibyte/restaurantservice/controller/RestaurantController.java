@@ -1,127 +1,121 @@
 package com.xsushirollx.sushibyte.restaurantservice.controller;
 
-import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
-import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
-import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
-import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantControllerService;
+import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
-@CrossOrigin(origins = "http://localhost:3000")
-@RestController()
-@RequestMapping(value = "/restaurant")
+@Controller
+//@RequestMapping("/restaurant")
 public class RestaurantController {
+	private Logger log = Logger.getLogger("RestaurantController");
 
-
-//    private final RestaurantRepository repository;
-    private final RestaurantControllerService restaurantControllerService;
-
-    public RestaurantController(/*RestaurantRepository repository,*/ RestaurantControllerService restaurantControllerService) {
-//        this.repository = repository;
-        this.restaurantControllerService = restaurantControllerService;
+	@Autowired
+    private RestaurantService restaurantControllerService;
+	
+	@GetMapping(value = "/restaurants/all/{page}")
+    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam("sort") String sort) {
+    	try {
+    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, sort), HttpStatus.OK);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
     }
 
+    @GetMapping(value = "/restaurant/{id}")
+    ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable Long id) {
+    	try {
+    		RestaurantDTO restaurant =  restaurantControllerService.findById(id);
+    		if (restaurant == null) {
+    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    		} else {
+    			return new ResponseEntity<>(restaurant, HttpStatus.OK);
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
 
-    @GetMapping
-    ResponseEntity<List<Restaurant>> getAllRestaurants() {
-
-//        return new ResponseEntity<>(repository.findAll(), HttpStatus.OK);
-        return restaurantControllerService.getAllRestaurants();
     }
 
-
-    @GetMapping("/{id}")
-    ResponseEntity<Restaurant> getOneRestaurant(@PathVariable Long id) {
-//        return new ResponseEntity<>(repository.findById(id).
-//                orElseThrow(() -> new RestaurantNotFoundException(id)), HttpStatus.OK);
-        return restaurantControllerService.getOneRestaurant(id);
-
-    }
-
-    @PostMapping
+    @PostMapping(value = "/restaurant")
     ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
-/*        Restaurant restaurantToBeAdded = new Restaurant(newRestaurant.getName(),
-                newRestaurant.getPriceCategory(), newRestaurant.getAverageRating(),
-                newRestaurant.getTags(), newRestaurant.getIsActive(),
-                newRestaurant.getStreetAddress(), newRestaurant.getCity(),
-                newRestaurant.getState(), newRestaurant.getZipCode());
 
-        Restaurant duplicateRestaurantCheck = repository.checkForExistingRestaurantByValues(
-                restaurantToBeAdded.getName(),
-                restaurantToBeAdded.getStreetAddress(),
-                restaurantToBeAdded.getCity(),
-                restaurantToBeAdded.getState(),
-                restaurantToBeAdded.getZipCode());
-
-        if (restaurantToBeAdded.equals(duplicateRestaurantCheck)) {
-            //return conflict status code
-            return ResponseEntity.unprocessableEntity()
-                    .body("This Restaurant already exists");
-        } else {
-            try {
-                return new ResponseEntity<Restaurant>((repository.save(restaurantToBeAdded)), HttpStatus.CREATED);
-            } catch (IllegalArgumentException | ConstraintViolationException ex) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Please check " +
-                        "for any missing fields which are required fora new restaurant to be created.");
-            } catch (Exception ex) {
-                //need to add an additional error message
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        }*/
-
-        return restaurantControllerService.addNewRestaurant(newRestaurant);
+    	try {
+    		log.entering("RestaurantController", "addNewRestaurant");
+    		if (restaurantControllerService.addNewRestaurant(newRestaurant)) {
+    			return new ResponseEntity<>(HttpStatus.CREATED);
+    		} else {
+    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+       
     }
 
-
-    @PutMapping("/{id}")
-    ResponseEntity<Restaurant> updateRestaurant(@RequestBody RestaurantDTO newRestaurant,
-                                                @PathVariable Long id) {
-
-/*        return new ResponseEntity<>(repository.findById(id).map(
-                restaurant -> {
-                    if (newRestaurant.getName() != null) restaurant.setName(newRestaurant.getName());
-                    if (newRestaurant.getAverageRating() != null)
-                        restaurant.setAverageRating(newRestaurant.getAverageRating());
-                    if (newRestaurant.getTags() != null) restaurant.setTags(newRestaurant.getTags());
-                    if (newRestaurant.getIsActive() != null) restaurant.setIsActive(newRestaurant.getIsActive());
-                    if (newRestaurant.getPriceCategory() != null)
-                        restaurant.setPriceCategory(newRestaurant.getPriceCategory());
-                    if (newRestaurant.getStreetAddress() != null)
-                        restaurant.setStreetAddress(newRestaurant.getStreetAddress());
-                    if (newRestaurant.getCity() != null) restaurant.setCity(newRestaurant.getCity());
-                    if (newRestaurant.getState() != null) restaurant.setState(newRestaurant.getState());
-                    if (newRestaurant.getZipCode() != null) restaurant.setZipCode(newRestaurant.getZipCode());
-                    return repository.save(restaurant);
-                })
-                .orElseThrow(() ->
-                        new RestaurantNotFoundException(id)),
-                HttpStatus.OK);*/
-        return restaurantControllerService.updateRestaurant(newRestaurant,id);
+    @PutMapping("/restaurant/{id}")
+    ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO newRestaurant, @PathVariable Long id) {
+    	try {
+    		if (restaurantControllerService.updateRestaurant(newRestaurant,id)) {
+    			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    		} else {
+    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
     }
 
-    @DeleteMapping("/{id}")
-
-    ResponseEntity<Restaurant> setRestaurantToInActive(@PathVariable Long id) {
-/*        ResponseEntity<Restaurant> inActiveRestaurant = getOneRestaurant(id);
-        if (inActiveRestaurant != null) {
-            repository.setInactiveById(id);
-
-            try {
-                repository.setInactiveById(id);
-
-            } catch (Exception e) {
-                return new ResponseEntity(inActiveRestaurant, HttpStatus.NOT_FOUND);
-            }
-        }
-        return new ResponseEntity(getOneRestaurant(id), HttpStatus.OK);*/
-        return restaurantControllerService.setRestaurantToInActive(id);
+    @DeleteMapping("/restaurant/{id}")
+    ResponseEntity<?> setRestaurantToInActive(@PathVariable Long id) {
+    	
+    	try {
+    		if (restaurantControllerService.setRestaurantToInActive(id)) {
+    			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    		} else {
+    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    		}
+    		
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+    	
+        
     }
 
+    @GetMapping("/restaurants/")
+    ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
+    		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
+    		@RequestParam(name = "active", defaultValue = "1") String active)  {
+    	try {
+    		return new ResponseEntity<>(restaurantControllerService.search(params, keywords, active), HttpStatus.OK);
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    	}
+    }
 }
 
 
