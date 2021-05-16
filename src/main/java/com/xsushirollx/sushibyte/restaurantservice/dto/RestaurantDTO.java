@@ -52,6 +52,7 @@ public class RestaurantDTO {
     public RestaurantDTO(){};
     
     public RestaurantDTO(Restaurant restaurant) {
+    	
     	this.id = restaurant.getId();
     	this.name = restaurant.getName();
 		this.priceCategory = restaurant.getPriceCategory();

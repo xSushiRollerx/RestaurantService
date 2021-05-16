@@ -6,6 +6,8 @@ import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +22,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 @Controller
-//@RequestMapping("/restaurant")
 public class RestaurantController {
 	private Logger log = Logger.getLogger("RestaurantController");
 
@@ -38,6 +39,7 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/restaurant/{id}")
+    @PostAuthorize("((returnObject.body == null or returnObject.body.getIsActive() == 1) and hasAuthority('CUSTOMER')) or hasAuthority('ADMINISTRATOR')")
     ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable Long id) {
     	try {
     		RestaurantDTO restaurant =  restaurantControllerService.findById(id);
@@ -54,6 +56,7 @@ public class RestaurantController {
 
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PostMapping(value = "/restaurant")
     ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant) {
 
@@ -72,6 +75,7 @@ public class RestaurantController {
        
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PutMapping("/restaurant/{id}")
     ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO newRestaurant, @PathVariable Long id) {
     	try {
@@ -87,6 +91,7 @@ public class RestaurantController {
     	}
     }
 
+    @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @DeleteMapping("/restaurant/{id}")
     ResponseEntity<?> setRestaurantToInActive(@PathVariable Long id) {
     	
