@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -43,6 +44,9 @@ public class RestaurantControllerTest {
 	
 	@MockBean
 	RestaurantService rservice;
+	
+
+	RestaurantService realrservice = new RestaurantService();
 	
 	@Autowired
 	JWTUtil util;
@@ -117,10 +121,17 @@ public class RestaurantControllerTest {
 	
 	@Test
 	public void getAllRestaurants200() {
-		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(new ArrayList<RestaurantDTO>());
+		String token  = "Bearer " + util.generateToken("96");
+		List<RestaurantDTO> result = new ArrayList<>();
+		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
+		
+		for (int i = 0; i < restaurants.size(); i++) {
+			result.add(new RestaurantDTO(restaurants.get(i)));
+		}
+		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.any(String.class))).thenReturn(result);
 		
 		try {
-			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
+			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();

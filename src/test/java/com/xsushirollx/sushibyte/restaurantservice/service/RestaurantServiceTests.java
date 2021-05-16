@@ -93,8 +93,8 @@ public class RestaurantServiceTests {
 	
 	@Test
 	public void getAllRestaurantsSortByName() {
-		List<RestaurantDTO> results = rservice.getAllRestaurants(0, "alphabetically");
-
+		List<RestaurantDTO> results = rservice.getAllRestaurants(0, "a-to-z");
+		log.info("Sort By Name: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
 		}
@@ -103,7 +103,7 @@ public class RestaurantServiceTests {
 	@Test
 	public void getAllRestaurantsSortByRating() {
 		List<RestaurantDTO> results = rservice.getAllRestaurants(0, "ratings");
-		log.info(results.toString());
+		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			log.info("Round" + i + " " + (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0 ? "true" : "false"));
 			assert (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0);
@@ -175,7 +175,7 @@ public class RestaurantServiceTests {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
-		params.put("sort", "alphabetically");
+		params.put("sort", "a-to-z");
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, keywords, "0");

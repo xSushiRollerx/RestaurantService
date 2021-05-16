@@ -25,13 +25,14 @@ public class RestaurantService {
 
 	public List<RestaurantDTO> getAllRestaurants(Integer page, String sort) {
 		switch (sort) {
-		case "alphabetically":
-			return Arrays.asList(repository.findAll(PageRequest.of(page, 250, Sort.by("name"))).stream().map(r -> new RestaurantDTO(r))
+		case "a-to-z":
+			return Arrays.asList(repository
+					.findAll(PageRequest.of(page, 250, Sort.by("name")))
+					.stream()
+					.map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		case "ratings":
 			log.info("In Avereage Rating: ");
-//			return Arrays.asList(repository.findAll(PageRequest.of(page, 250, Sort.by("averageRating").descending())).stream().map(r -> new RestaurantDTO(r))
-//					.toArray(RestaurantDTO[]::new));
 			return Arrays.asList(repository.findAllSortByAverageRating(PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		default:
@@ -85,7 +86,7 @@ public class RestaurantService {
 		}
 
 		switch (params.get("sort")) {
-		case "alphabetically":
+		case "a-to-z":
 			return repository.findByKeywordsSortByName(regex.substring(1), active,
 					PageRequest.of(Integer.parseInt(params.get("page")), 250));
 		case "ratings":

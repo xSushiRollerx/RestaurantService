@@ -31,7 +31,6 @@ public class RestaurantDTO {
     @Max(1)
     private Integer isActive;
 
-
     @Min(1)
     @Max(5)
     private Integer priceCategory;
@@ -218,11 +217,17 @@ public class RestaurantDTO {
 		this.relevance = relevance;
 	}
 
+//	@Override
+//	public String toString() {
+//		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
+//				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
+//				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode +  "]";
+//	}
+	
 	@Override
 	public String toString() {
 		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
-				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
-				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode +  "]";
+				+ ", isActive=" + isActive +  "]";
 	}
 	
 	
