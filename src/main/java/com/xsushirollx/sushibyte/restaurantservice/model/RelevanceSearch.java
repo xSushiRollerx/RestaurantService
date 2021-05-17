@@ -1,11 +1,16 @@
 package com.xsushirollx.sushibyte.restaurantservice.model;
 
 
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.EntityResult;
+import javax.persistence.FetchType;
 import javax.persistence.FieldResult;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.NamedNativeQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.SqlResultSetMapping;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -65,6 +70,10 @@ public class RelevanceSearch {
     private Integer zipCode;
     
     private Double relevance = (double) 0;
+    
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn(name = "restaurant_id")
+    List<Food> menu;
 
     public RelevanceSearch(){};
     
@@ -234,12 +243,19 @@ public class RelevanceSearch {
 		this.relevance = relevance;
 	}
 
+	public List<Food> getMenu() {
+		return menu;
+	}
+
+	public void setMenu(List<Food> menu) {
+		this.menu = menu;
+	}
+
 	@Override
 	public String toString() {
 		return "RelevanceSearch [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
-				+ ", isActive=" + isActive + ", relevance=" + relevance + "]";
+				+ ", isActive=" + isActive + ", menu=" + menu + "]";
 	}
-	
 	
 
 }

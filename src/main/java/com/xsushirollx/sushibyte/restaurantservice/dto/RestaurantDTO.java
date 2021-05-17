@@ -95,6 +95,10 @@ public class RestaurantDTO {
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
 		this.relevance = restaurant.getRelevance();
+		
+		if (restaurant.getMenu() != null) {
+			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
+		}
 	}
 
     public Long getId() {
