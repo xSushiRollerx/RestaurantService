@@ -117,7 +117,7 @@ public class RestaurantController {
     @GetMapping("/restaurants/")
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
-    		@RequestParam(name = "active", defaultValue = "1") String active)  {
+    		@RequestParam(name = "active", defaultValue = "1") Integer active)  {
     	try {
     		return new ResponseEntity<>(restaurantControllerService.search(params, keywords, active), HttpStatus.OK);
     	} catch(Exception e) {

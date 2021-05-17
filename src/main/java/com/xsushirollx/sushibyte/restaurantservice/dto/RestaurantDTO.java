@@ -2,6 +2,7 @@ package com.xsushirollx.sushibyte.restaurantservice.dto;
 
 import org.springframework.stereotype.Component;
 
+import com.xsushirollx.sushibyte.restaurantservice.model.RelevanceSearch;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
 import javax.validation.constraints.Max;
@@ -10,7 +11,6 @@ import javax.validation.constraints.Size;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 
 @Component
@@ -68,21 +68,6 @@ public class RestaurantDTO {
 			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
 		}
     }
-
-    public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
-    		Integer zipCode, Double relevance){
-        this();
-        this.name = name;
-        this.priceCategory = priceCategory;
-        this.averageRating = averageRating;
-        this.tags = tags;
-        this.isActive = isActive;
-        this.streetAddress = streetAddress;
-        this.city = city;
-        this.state = state;
-        this.zipCode = zipCode;
-        this.relevance = relevance;
-    }
     
     public RestaurantDTO(String name, Integer priceCategory, Double averageRating, String tags, Integer isActive, String streetAddress, String city, String state, 
     		Integer zipCode){
@@ -98,20 +83,19 @@ public class RestaurantDTO {
         this.zipCode = zipCode;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RestaurantDTO that = (RestaurantDTO) o;
-        return Objects.equals(name, that.name) && Objects.equals(streetAddress,
-                that.streetAddress) && Objects.equals(city, that.city) &&
-                Objects.equals(state, that.state) && Objects.equals(zipCode, that.zipCode);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
+    public RestaurantDTO(RelevanceSearch restaurant) {
+    	this.id = restaurant.getId();
+    	this.name = restaurant.getName();
+		this.priceCategory = restaurant.getPriceCategory();
+		this.averageRating = restaurant.getAverageRating();
+		this.tags = restaurant.getTags();
+		this.isActive = restaurant.getIsActive();
+		this.streetAddress = restaurant.getStreetAddress();
+		this.city = restaurant.getCity();
+		this.state = restaurant.getState();
+		this.zipCode = restaurant.getZipCode();
+		this.relevance = restaurant.getRelevance();
+	}
 
     public Long getId() {
         return id;
@@ -217,19 +201,10 @@ public class RestaurantDTO {
 		this.relevance = relevance;
 	}
 
-//	@Override
-//	public String toString() {
-//		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
-//				+ ", isActive=" + isActive + ", priceCategory=" + priceCategory + ", streetAddress=" + streetAddress
-//				+ ", city=" + city + ", state=" + state + ", zipCode=" + zipCode +  "]";
-//	}
-	
 	@Override
 	public String toString() {
 		return "RestaurantDTO [id=" + id + ", name=" + name + ", averageRating=" + averageRating + ", tags=" + tags
-				+ ", isActive=" + isActive +  "]";
+				+ ", isActive=" + isActive + ", relevance=" + relevance + "]";
 	}
-	
-	
 
 }

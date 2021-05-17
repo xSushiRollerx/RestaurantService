@@ -72,47 +72,47 @@ public class RestaurantDAOTests {
 		
 		
 	}
-	
-	@Test
-	public void setInactiveById() {
-		rdao.setInactiveById(testRestaurants.get(0).getId());
-		assertEquals(0, rdao.findById(testRestaurants.get(0).getId()).get().getIsActive());
-	}
-	
-	@Test
-	public void checkForExistingRestaurantByValues() {
-		assert(rdao.checkForExistingRestaurantByValues(testRestaurants.get(0).getName(), testRestaurants.get(0).getStreetAddress(), testRestaurants.get(0).getCity(), testRestaurants.get(0).getState(), testRestaurants.get(0).getZipCode()) != null);
-		
-		testRestaurants.get(0).setStreetAddress("1435 Rizzo Star");
-		assert(rdao.checkForExistingRestaurantByValues(testRestaurants.get(0).getName(), testRestaurants.get(0).getStreetAddress(), testRestaurants.get(0).getCity(), testRestaurants.get(0).getState(), testRestaurants.get(0).getZipCode()) == null);
-	}
-	
-	@Test
-	public void findByKeywordsParameterCheck() {
-		//test words exclusive to each param field to ensure all are being checked
-		
-		for (int i = 0; i < testRestaurants.size(); i++) {
-			log.info(rdao.findById(testRestaurants.get(i).getId()).toString());
-		}
-		
-		List<Restaurant> restaurantName = rdao.findByKeywords("bar", 0, PageRequest.of(0, 250));
-		log.info("Restaurant Name: " + restaurantName.toString());
-		
-		List<Restaurant> restaurantTags = rdao.findByKeywords("texmex", 0, PageRequest.of(0, 250));
-		log.info("Restaurant Tags: " + restaurantTags.toString());
-		
-		List<Restaurant> foodName = rdao.findByKeywords("camarones", 0, PageRequest.of(0, 250));
-		log.info("Food Name: " + foodName.toString());
-		
-		List<Restaurant> foodSummary = rdao.findByKeywords("drizzled", 0, PageRequest.of(0, 250));
-		log.info("Food Summary: " + foodSummary.toString());
-		
-		assert(restaurantName.get(0).getName().equals("Burger Bar") && restaurantName.size() == 1);
-		assert(restaurantTags.get(0).getTags().contains("latin") && restaurantTags.size() == 1);
-		assert(foodName.get(0).getName().equals("Casa Feliz") && foodName.size() == 1);
-		assert(foodSummary.get(0).getName().equals("Burger Bar") && foodSummary.size() == 1);
-		
-	}
+//	
+//	@Test
+//	public void setInactiveById() {
+//		rdao.setInactiveById(testRestaurants.get(0).getId());
+//		assertEquals(0, rdao.findById(testRestaurants.get(0).getId()).get().getIsActive());
+//	}
+//	
+//	@Test
+//	public void checkForExistingRestaurantByValues() {
+//		assert(rdao.checkForExistingRestaurantByValues(testRestaurants.get(0).getName(), testRestaurants.get(0).getStreetAddress(), testRestaurants.get(0).getCity(), testRestaurants.get(0).getState(), testRestaurants.get(0).getZipCode()) != null);
+//		
+//		testRestaurants.get(0).setStreetAddress("1435 Rizzo Star");
+//		assert(rdao.checkForExistingRestaurantByValues(testRestaurants.get(0).getName(), testRestaurants.get(0).getStreetAddress(), testRestaurants.get(0).getCity(), testRestaurants.get(0).getState(), testRestaurants.get(0).getZipCode()) == null);
+//	}
+//	
+//	@Test
+//	public void findByKeywordsParameterCheck() {
+//		//test words exclusive to each param field to ensure all are being checked
+//		
+//		for (int i = 0; i < testRestaurants.size(); i++) {
+//			log.info(rdao.findById(testRestaurants.get(i).getId()).toString());
+//		}
+//		
+//		List<Restaurant> restaurantName = rdao.findByKeywords("bar", 0, PageRequest.of(0, 250));
+//		log.info("Restaurant Name: " + restaurantName.toString());
+//		
+//		List<Restaurant> restaurantTags = rdao.findByKeywords("texmex", 0, PageRequest.of(0, 250));
+//		log.info("Restaurant Tags: " + restaurantTags.toString());
+//		
+//		List<Restaurant> foodName = rdao.findByKeywords("camarones", 0, PageRequest.of(0, 250));
+//		log.info("Food Name: " + foodName.toString());
+//		
+//		List<Restaurant> foodSummary = rdao.findByKeywords("drizzled", 0, PageRequest.of(0, 250));
+//		log.info("Food Summary: " + foodSummary.toString());
+//		
+//		assert(restaurantName.get(0).getName().equals("Burger Bar") && restaurantName.size() == 1);
+//		assert(restaurantTags.get(0).getTags().contains("latin") && restaurantTags.size() == 1);
+//		assert(foodName.get(0).getName().equals("Casa Feliz") && foodName.size() == 1);
+//		assert(foodSummary.get(0).getName().equals("Burger Bar") && foodSummary.size() == 1);
+//		
+//	}
 	
 	@Test
 	public void findByKeywordsMultipleWords() {
@@ -144,7 +144,7 @@ public class RestaurantDAOTests {
 	@Test
 	public void findByKeywordsSortByRating() {
 		List<Restaurant> results = rdao.findByKeywordsSortByRating("american|burrito", 0, PageRequest.of(0, 250)); 
-		log.info("Sort By Name: " + results.toString());
+		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
 		}
