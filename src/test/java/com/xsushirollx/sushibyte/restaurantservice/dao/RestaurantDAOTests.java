@@ -144,7 +144,7 @@ public class RestaurantDAOTests {
 	@Test
 	public void findByKeywordsSortByRating() {
 		List<Restaurant> results = rdao.findByKeywordsSortByRating("american|burrito", 0, PageRequest.of(0, 250)); 
-		log.info("Sort By Name: " + results.toString());
+		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
 		}

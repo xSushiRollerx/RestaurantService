@@ -9,14 +9,14 @@ import javax.validation.constraints.Min;
 import java.util.Arrays;
 import java.util.List;
 
-@Entity
+
+@Entity(name = "Restaurant")
 @Table(name = "restaurant")
 public class Restaurant {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id"
-	)
+	@Column(name = "id")
 	private Long id;
 
 	@Column(name = "name")
