@@ -23,20 +23,25 @@ public class RestaurantService {
 
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
-	public List<RestaurantDTO> getAllRestaurants(Integer page, String sort) {
+	public List<RestaurantDTO> getAllRestaurants(Integer page, String sort, Integer active) {
 		switch (sort) {
 		case "a-to-z":
+//			return Arrays.asList(repository
+//					.findAll(PageRequest.of(page, 250, Sort.by("name")))
+//					.stream()
+//					.map(r -> new RestaurantDTO(r))
+//					.toArray(RestaurantDTO[]::new));
 			return Arrays.asList(repository
-					.findAll(PageRequest.of(page, 250, Sort.by("name")))
+					.findByIsActiveGreaterThanEqual(active, PageRequest.of(page, 250, Sort.by("name")))
 					.stream()
 					.map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		case "ratings":
-			log.info("In Avereage Rating: ");
-			return Arrays.asList(repository.findAllSortByAverageRating(PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
+			log.info("In Average Rating: ");
+			return Arrays.asList(repository.findAllSortByAverageRating(active, PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		default:
-			return Arrays.asList(repository.findAll(PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
+			return Arrays.asList(repository.findByIsActiveGreaterThanEqual(active, PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		}
 	}
