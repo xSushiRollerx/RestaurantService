@@ -297,11 +297,12 @@ public class RestaurantControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void search200() {
+		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.search(Mockito.any(Map.class), Mockito.any(String[].class), Mockito.any(String.class))).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
-			mockMvc.perform(get("/restaurants/?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)))
-					.andExpect(status().isOk());
+			mockMvc.perform(get("/restaurants/?sort=rating&&keywords=queen,burger&&active=0").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+					.andExpect(status().isForbidden());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

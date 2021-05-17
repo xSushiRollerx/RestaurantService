@@ -113,6 +113,7 @@ public class RestaurantController {
         
     }
 
+    @PreAuthorize(value = "((hasAuthority('CUSTOMER') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
     @GetMapping("/restaurants/")
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
