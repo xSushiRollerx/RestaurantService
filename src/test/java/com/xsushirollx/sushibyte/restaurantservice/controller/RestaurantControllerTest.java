@@ -121,7 +121,6 @@ public class RestaurantControllerTest {
 	
 	@Test
 	public void getAllRestaurants200() {
-		String token  = "Bearer " + util.generateToken("96");
 		List<RestaurantDTO> result = new ArrayList<>();
 		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
 		
@@ -131,7 +130,7 @@ public class RestaurantControllerTest {
 		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
 		
 		try {
-			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -159,12 +158,11 @@ public class RestaurantControllerTest {
 	
 	@Test
 	public void getRestaurant200() {
-		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.findById(Mockito.anyLong())).thenReturn(new RestaurantDTO(testRestaurants.get(1)));
+		when(rservice.findById(Mockito.anyLong())).thenReturn(new RestaurantDTO(testRestaurants.get(0)));
 		
 		
 		try {
-			mockMvc.perform(get("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+			mockMvc.perform(get("/restaurant/1").contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -172,14 +170,14 @@ public class RestaurantControllerTest {
 	}
 	
 	@Test
-	public void getRestaurant400() {
+	public void getRestaurant404() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.findById(Mockito.anyLong())).thenReturn(null);
 		
 		
 		try {
 			mockMvc.perform(get("/restaurant/" + testRestaurants.get(0).getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
-					.andExpect(status().isBadRequest());
+					.andExpect(status().isNotFound());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

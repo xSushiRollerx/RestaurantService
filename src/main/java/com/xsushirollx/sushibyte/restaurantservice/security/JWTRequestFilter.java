@@ -1,6 +1,7 @@
 package com.xsushirollx.sushibyte.restaurantservice.security;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -11,11 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
 import com.xsushirollx.sushibyte.restaurantservice.dao.UserDAO;
 import com.xsushirollx.sushibyte.restaurantservice.model.User;
-
-
 
 @Component
 public class JWTRequestFilter extends OncePerRequestFilter {
@@ -25,8 +23,8 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 
 	@Autowired
 	UserDAO cdao;
-
-
+	
+	Logger log = Logger.getLogger("JWTRequestFilter");
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -35,25 +33,26 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 		// assume authentication so valid jwt which starts w/ "Bearer "
 		try {
 			String token = request.getHeader("Authorization").substring(7);
-			int userId = Integer.parseInt(util.extractUserId(request.getHeader("Authorization").substring(7)));
 			
+			int userId = Integer.parseInt(util.extractUserId(token));
+
 			User customer = null;
-			
-			if (util.validateToken(token)) {
-				customer = cdao.findById(userId).get();
-			} else {
-				customer = new User(0,0); 
-			}
-			
+				if (util.validateToken(token)) {
+					customer = cdao.findById(userId).get();
+				} else {
+					customer = new User(0, 0);
+				}
+
 			UserAuthenticationToken customerAuthentication = new UserAuthenticationToken(customer, token);
 			SecurityContextHolder.getContext().setAuthentication(customerAuthentication);
 		} catch (Exception e) {
-
+			log.info("customer error thrown");
+			User customer = new User(0, 0);
+			UserAuthenticationToken customerAuthentication = new UserAuthenticationToken(customer, "BLANK");
+			SecurityContextHolder.getContext().setAuthentication(customerAuthentication);
 		} finally {
 			filterChain.doFilter(request, response);
 		}
 	}
 
-
 }
-
