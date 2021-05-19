@@ -38,11 +38,13 @@ public class UserAuthenticationToken implements Authentication {
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		log.log(Level.INFO, "Authentication Authorities SET");
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		
 		if (user.getRole() == 0) {
 			authorities.add(new SimpleGrantedAuthority("NONE"));
 			log.log(Level.INFO, "Customer null so token null");
 			return authorities;
 		}
+		
 		switch (user.getRole()) {
 		case 1:
 			authorities.add(new SimpleGrantedAuthority("CUSTOMER"));

@@ -29,10 +29,9 @@ public class RestaurantController {
 	@Autowired
     private RestaurantService restaurantControllerService;
 	
-	@PreAuthorize(value = "((hasAuthority('CUSTOMER') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
+	@PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
 	@GetMapping(value = "/restaurants/all/{page}")
-    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam("sort") String sort, @RequestHeader("Authorization") String token,
-    		@RequestParam(defaultValue = "1", name = "active") Integer active) {
+    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam("sort") String sort, @RequestParam(defaultValue = "1", name = "active") Integer active) {
     	try {
     		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, sort,active), HttpStatus.OK);
     	} catch(Exception e) {
@@ -42,12 +41,12 @@ public class RestaurantController {
     }
 
     @GetMapping(value = "/restaurant/{id}")
-    @PostAuthorize("((returnObject.body == null or returnObject.body.getIsActive() == 1) and hasAuthority('CUSTOMER')) or hasAuthority('ADMINISTRATOR')")
-    ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    @PostAuthorize("((returnObject.body == null or returnObject.body.getIsActive() == 1) and hasAnyAuthority('CUSTOMER','NONE')) or hasAuthority('ADMINISTRATOR')")
+    ResponseEntity<?> getRestaurant(@PathVariable Long id) {
     	try {
     		RestaurantDTO restaurant =  restaurantControllerService.findById(id);
     		if (restaurant == null) {
-    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    			return new ResponseEntity<>("Requested Restaurant Does Not Exist", HttpStatus.NOT_FOUND);
     		} else {
     			return new ResponseEntity<>(restaurant, HttpStatus.OK);
     		}
@@ -113,7 +112,7 @@ public class RestaurantController {
         
     }
 
-    @PreAuthorize(value = "((hasAuthority('CUSTOMER') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
+    @PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
     @GetMapping("/restaurants/")
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
