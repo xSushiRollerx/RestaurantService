@@ -31,7 +31,7 @@ public class RestaurantController {
 	
 	@PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
 	@GetMapping(value = "/restaurants/all/{page}")
-    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam("sort") String sort, @RequestParam(defaultValue = "1", name = "active") Integer active) {
+    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam(value = "sort", required = false) String sort, @RequestParam(defaultValue = "1", name = "active") Integer active) {
     	try {
     		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, sort,active), HttpStatus.OK);
     	} catch(Exception e) {

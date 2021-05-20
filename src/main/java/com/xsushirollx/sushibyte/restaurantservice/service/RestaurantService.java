@@ -30,6 +30,10 @@ public class RestaurantService {
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
 	public List<RestaurantDTO> getAllRestaurants(Integer page, String sort, Integer active) {
+		if (sort == null) {
+			return Arrays.asList(repository.findByIsActiveGreaterThanEqual(active, PageRequest.of(page, 250)).stream().map(r -> new RestaurantDTO(r))
+					.toArray(RestaurantDTO[]::new));
+		}
 		switch (sort) {
 		case "a-to-z":
 			return Arrays.asList(repository
