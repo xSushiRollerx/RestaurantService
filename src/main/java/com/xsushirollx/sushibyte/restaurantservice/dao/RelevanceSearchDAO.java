@@ -9,6 +9,6 @@ import org.springframework.data.repository.query.Param;
 import com.xsushirollx.sushibyte.restaurantservice.model.RelevanceSearch;
 
 public interface RelevanceSearchDAO extends JpaRepository<RelevanceSearch, Long>{
-	List<RelevanceSearch> findByKeywordsSortByRelevance(@Param("keywords") String keywords, @Param("active")Integer active, Pageable pageRequest);
+	List<RelevanceSearch> findByKeywordsSortByRelevance(@Param("keywords") String keywords, @Param("rating") Double rating, @Param("active")Integer active, Pageable pageRequest);
 
 }

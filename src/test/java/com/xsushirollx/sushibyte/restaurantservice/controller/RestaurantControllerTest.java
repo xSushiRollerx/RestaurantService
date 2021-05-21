@@ -299,7 +299,7 @@ public class RestaurantControllerTest {
 		when(rservice.search(Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(String[].class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
-			mockMvc.perform(get("/restaurants/?sort=rating&&keywords=queen,burger&&active=0").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger&&active=0").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isForbidden());
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -313,7 +313,7 @@ public class RestaurantControllerTest {
 		when(rservice.search(Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(String[].class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
-			mockMvc.perform(get("/restaurants/?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();

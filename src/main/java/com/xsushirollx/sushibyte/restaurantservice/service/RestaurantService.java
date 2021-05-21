@@ -97,7 +97,7 @@ public class RestaurantService {
 			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		default:
-			List<RestaurantDTO> restaurants = dataTransferRelevance( relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), active,
+			List<RestaurantDTO> restaurants = dataTransferRelevance( relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 			
 			if (restaurants.size() > 0 && restaurants.get(restaurants.size() - 1).getRelevance() == 0) {

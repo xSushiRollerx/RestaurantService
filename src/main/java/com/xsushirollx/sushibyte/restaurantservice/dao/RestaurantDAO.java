@@ -44,7 +44,7 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
 			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) "
-			+ "and (restaurant.average_rating >= :rating)group by restaurant.id "
+			+ "and (restaurant.average_rating >= :rating) group by restaurant.id "
 			+ "order by restaurant.average_rating desc", nativeQuery = true)
 	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
 

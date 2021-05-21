@@ -22,7 +22,8 @@ import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 @NamedNativeQuery(name = "RelevanceSearch.findByKeywordsSortByRelevance",
 		query = "select restaurant.*, (sum(if(food.name regexp :keywords, 1 ,0)) + sum(if(food.summary regexp :keywords, 1.5, 0)) + "
 				+ "if(restaurant.name regexp :keywords, 1, 0) + if(restaurant.tags regexp :keywords, 2, 0)) as relevance "
-				+ "from restaurant join food on restaurant.id = food.restaurant_id where (restaurant.is_active >= :active)"
+				+ "from restaurant join food on restaurant.id = food.restaurant_id where (restaurant.is_active >= :active) "
+				+ "and (restaurant.average_rating >= :rating) "
 				+ "group by restaurant.id order by relevance desc", resultSetMapping = "RelevanceSort")
 @SqlResultSetMapping(name = "RelevanceSort", entities = {
 		@EntityResult(entityClass = RelevanceSearch.class, fields = {
