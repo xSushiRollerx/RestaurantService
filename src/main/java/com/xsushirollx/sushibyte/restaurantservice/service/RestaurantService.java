@@ -23,29 +23,30 @@ public class RestaurantService {
 
 	@Autowired
 	private RestaurantDAO repository;
-	
+
 	@Autowired
 	private RelevanceSearchDAO relevanceRepository;
 
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
-	public List<RestaurantDTO> getAllRestaurants(Integer page, Integer pageSize, Double rating, String sort, Integer active) {
-		
+	public List<RestaurantDTO> getAllRestaurants(Integer page, Integer pageSize, Double rating, String sort,
+			Integer active) {
+
 		switch (sort) {
 		case "a-to-z":
 			return Arrays.asList(repository
-					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating, PageRequest.of(page, pageSize, Sort.by("name")))
-					.stream()
-					.map(r -> new RestaurantDTO(r))
-					.toArray(RestaurantDTO[]::new));
+					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating,
+							PageRequest.of(page, pageSize, Sort.by("name")))
+					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		case "ratings":
 			log.info("In Average Rating: ");
-			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
-					.toArray(RestaurantDTO[]::new));
+			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, PageRequest.of(page, pageSize))
+					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		default:
 			return Arrays.asList(repository
-					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
-					.toArray(RestaurantDTO[]::new));
+					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating,
+							PageRequest.of(page, pageSize))
+					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		}
 	}
 
@@ -83,12 +84,30 @@ public class RestaurantService {
 		return true;
 	}
 
-	public List<RestaurantDTO> search(Map<String, String> params, Double rating, Integer pageSize, String[] keywords, Integer active) {
+	public List<RestaurantDTO> search(Map<String, String> params, Double rating, Integer pageSize, String[] keywords,
+			Integer active) {
 		String regex = "";
+		Integer one = 0;
+		Integer two = 0;
+		Integer three = 0;
+		Integer four = 0;
+
 		for (String k : keywords) {
 			regex += "|" + k;
 		}
-
+		
+		if (params.get("priceCategory").contains("1")) {
+			one = 1;
+		}
+		if (params.get("priceCategory").contains("2")) {
+			two = 2;
+		}
+		if (params.get("priceCategory").contains("3")) {
+			three = 3;
+		}
+		if (params.get("priceCategory").contains("4")) {
+			four = 4;
+		}
 		switch (params.get("sort")) {
 		case "a-to-z":
 			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active, rating,
@@ -97,9 +116,10 @@ public class RestaurantService {
 			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		default:
-			List<RestaurantDTO> restaurants = dataTransferRelevance( relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active,
-					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
-			
+			List<RestaurantDTO> restaurants = dataTransferRelevance(
+					relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
+							three, four, PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
+
 			if (restaurants.size() > 0 && restaurants.get(restaurants.size() - 1).getRelevance() == 0) {
 				restaurants = new ArrayList<>(restaurants);
 				restaurants.removeIf(r -> r.getRelevance() == 0);
@@ -112,11 +132,10 @@ public class RestaurantService {
 		log.entering("RestaurantService", "dataTransfer");
 		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 	}
-	
+
 	private List<RestaurantDTO> dataTransferRelevance(List<RelevanceSearch> restaurants) {
 		log.entering("RestaurantService", "dataTransfer");
 		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 	}
-	
 
 }

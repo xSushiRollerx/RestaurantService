@@ -264,8 +264,6 @@ public class RestaurantControllerTest {
 		}
 	}
 	
-	
-	
 	@Test
 	public void deleteRestaurant201() {
 		String token  = "Bearer " + util.generateToken("98");

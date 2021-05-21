@@ -119,7 +119,7 @@ public class RestaurantController {
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @PathVariable("page") String page,
     		@RequestParam(name = "active", defaultValue = "1") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
-    		@RequestParam(name = "rating", defaultValue = "0.0") Double rating)  {
+    		@RequestParam(name = "rating", defaultValue = "0.0") Double rating, @RequestParam(name="priceCategories", defaultValue="1,2,3,4") String priceCategories)  {
     	try {
     		return new ResponseEntity<>(restaurantControllerService.search(params, rating, pageSize, keywords, active), HttpStatus.OK);
     	} catch(Exception e) {

@@ -24,6 +24,7 @@ import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 				+ "if(restaurant.name regexp :keywords, 1, 0) + if(restaurant.tags regexp :keywords, 2, 0)) as relevance "
 				+ "from restaurant join food on restaurant.id = food.restaurant_id where (restaurant.is_active >= :active) "
 				+ "and (restaurant.average_rating >= :rating) "
+				+ "and (restaurant.price_category = :one or restaurant.price_category = :two or restaurant.price_category = :three or restaurant.price_category = :four)"
 				+ "group by restaurant.id order by relevance desc", resultSetMapping = "RelevanceSort")
 @SqlResultSetMapping(name = "RelevanceSort", entities = {
 		@EntityResult(entityClass = RelevanceSearch.class, fields = {

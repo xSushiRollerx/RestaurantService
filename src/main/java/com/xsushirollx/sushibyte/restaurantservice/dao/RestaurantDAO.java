@@ -54,8 +54,6 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	@Query(value = "select * from restaurant where is_active >= :active and average_rating >= :rating  order by average_rating desc", nativeQuery = true)
 	List<Restaurant> findAllSortByAverageRating(@Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
 
-	List<Restaurant> findByIsActiveGreaterThanEqual(Integer active, Pageable pageRequest);
-
 	List<Restaurant> findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(Integer active, Double rating, Pageable pageRequest);
 
 	
