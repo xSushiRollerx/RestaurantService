@@ -36,23 +36,27 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
-			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) group by restaurant.id "
+			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) "
+			+ "and (restaurant.average_rating >= :rating) group by restaurant.id "
 			+ "order by restaurant.name", nativeQuery = true)
-	List<Restaurant> findByKeywordsSortByName(@Param("keywords") String keywords, @Param("active") Integer active, Pageable pageRequest);
+	List<Restaurant> findByKeywordsSortByName(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
 	
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
-			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) group by restaurant.id "
+			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) "
+			+ "and (restaurant.average_rating >= :rating)group by restaurant.id "
 			+ "order by restaurant.average_rating desc", nativeQuery = true)
-	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, Pageable pageRequest);
+	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
 
 	boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
 			String state, Integer zipCode);
 
-	@Query(value = "select * from restaurant where is_active >= :active order by average_rating desc", nativeQuery = true)
-	List<Restaurant> findAllSortByAverageRating(@Param("active") Integer active, Pageable pageRequest);
+	@Query(value = "select * from restaurant where is_active >= :active and average_rating >= :rating  order by average_rating desc", nativeQuery = true)
+	List<Restaurant> findAllSortByAverageRating(@Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
 
 	List<Restaurant> findByIsActiveGreaterThanEqual(Integer active, Pageable pageRequest);
+
+	List<Restaurant> findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(Integer active, Double rating, Pageable pageRequest);
 
 	
 }

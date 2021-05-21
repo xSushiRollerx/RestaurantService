@@ -32,9 +32,10 @@ public class RestaurantController {
 	@PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
 	@GetMapping(value = "/restaurants/all/{page}")
     ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam(value = "sort", defaultValue = "default") String sort, 
-    		@RequestParam(defaultValue = "1", name = "active") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize) {
+    		@RequestParam(defaultValue = "1", name = "active") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
+    		@RequestParam(defaultValue = "0.0", name = "rating") Double rating) {
     	try {
-    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, pageSize, sort,active), HttpStatus.OK);
+    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, pageSize, rating, sort,active), HttpStatus.OK);
     	} catch(Exception e) {
     		e.printStackTrace();
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
@@ -117,9 +118,10 @@ public class RestaurantController {
     @GetMapping("/restaurants/")
     ResponseEntity<List<RestaurantDTO>> searchByKeyword(@RequestParam Map<String, String> params, @RequestParam("keywords") String[] keywords,
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @RequestParam(name = "page", defaultValue = "0") String page,
-    		@RequestParam(name = "active", defaultValue = "1") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize)  {
+    		@RequestParam(name = "active", defaultValue = "1") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
+    		@RequestParam(name = "rating", defaultValue = "0.0") Double rating)  {
     	try {
-    		return new ResponseEntity<>(restaurantControllerService.search(params, pageSize, keywords, active), HttpStatus.OK);
+    		return new ResponseEntity<>(restaurantControllerService.search(params, rating, pageSize, keywords, active), HttpStatus.OK);
     	} catch(Exception e) {
     		e.printStackTrace();
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

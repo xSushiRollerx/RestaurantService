@@ -29,21 +29,22 @@ public class RestaurantService {
 
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
-	public List<RestaurantDTO> getAllRestaurants(Integer page, Integer pageSize, String sort, Integer active) {
+	public List<RestaurantDTO> getAllRestaurants(Integer page, Integer pageSize, Double rating, String sort, Integer active) {
 		
 		switch (sort) {
 		case "a-to-z":
 			return Arrays.asList(repository
-					.findByIsActiveGreaterThanEqual(active, PageRequest.of(page, pageSize, Sort.by("name")))
+					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating, PageRequest.of(page, pageSize, Sort.by("name")))
 					.stream()
 					.map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		case "ratings":
 			log.info("In Average Rating: ");
-			return Arrays.asList(repository.findAllSortByAverageRating(active, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
+			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		default:
-			return Arrays.asList(repository.findByIsActiveGreaterThanEqual(active, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
+			return Arrays.asList(repository
+					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating, PageRequest.of(page, pageSize)).stream().map(r -> new RestaurantDTO(r))
 					.toArray(RestaurantDTO[]::new));
 		}
 	}
@@ -82,7 +83,7 @@ public class RestaurantService {
 		return true;
 	}
 
-	public List<RestaurantDTO> search(Map<String, String> params,  Integer pageSize, String[] keywords, Integer active) {
+	public List<RestaurantDTO> search(Map<String, String> params, Double rating, Integer pageSize, String[] keywords, Integer active) {
 		String regex = "";
 		for (String k : keywords) {
 			regex += "|" + k;
@@ -90,11 +91,11 @@ public class RestaurantService {
 
 		switch (params.get("sort")) {
 		case "a-to-z":
-			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active,
+			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active, rating,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		case "ratings":
-			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active,
-					PageRequest.of(Integer.parseInt(params.get("page")), 250)));
+			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating,
+					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		default:
 			List<RestaurantDTO> restaurants = dataTransferRelevance( relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), active,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
