@@ -31,11 +31,11 @@ public class RestaurantController {
 	
 	@PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
 	@GetMapping(value = "/restaurants/all/{page}")
-    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page, @RequestParam(value = "sort", defaultValue = "default") String sort, 
+    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page,@RequestParam Map<String, String> params, @RequestParam(value = "sort", defaultValue = "default") String sort, 
     		@RequestParam(defaultValue = "1", name = "active") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
     		@RequestParam(defaultValue = "0.0", name = "rating") Double rating) {
     	try {
-    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(page, pageSize, rating, sort,active), HttpStatus.OK);
+    		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(params, page, pageSize, rating, sort,active), HttpStatus.OK);
     	} catch(Exception e) {
     		e.printStackTrace();
     		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

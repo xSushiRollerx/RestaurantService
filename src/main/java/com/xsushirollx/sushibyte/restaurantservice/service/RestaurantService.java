@@ -8,7 +8,6 @@ import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -29,23 +28,38 @@ public class RestaurantService {
 
 	private Logger log = Logger.getLogger("RestaurantServiceTests");
 
-	public List<RestaurantDTO> getAllRestaurants(Integer page, Integer pageSize, Double rating, String sort,
+	public List<RestaurantDTO> getAllRestaurants(Map<String, String> params, Integer page, Integer pageSize, Double rating, String sort,
 			Integer active) {
+		Integer one = 0;
+		Integer two = 0;
+		Integer three = 0;
+		Integer four = 0;
+		
+		if (params.get("priceCategory").contains("1")) {
+			one = 1;
+		}
+		if (params.get("priceCategory").contains("2")) {
+			two = 2;
+		}
+		if (params.get("priceCategory").contains("3")) {
+			three = 3;
+		}
+		if (params.get("priceCategory").contains("4")) {
+			four = 4;
+		}
 
 		switch (sort) {
 		case "a-to-z":
 			return Arrays.asList(repository
-					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating,
-							PageRequest.of(page, pageSize, Sort.by("name")))
+					.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
 					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		case "ratings":
 			log.info("In Average Rating: ");
-			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, PageRequest.of(page, pageSize))
+			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
 					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		default:
 			return Arrays.asList(repository
-					.findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(active, rating,
-							PageRequest.of(page, pageSize))
+					.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
 					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
 		}
 	}

@@ -15,6 +15,8 @@ import javax.transaction.Transactional;
 
 @Repository
 public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
+	
+	boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city, String state, Integer zipCode);
 
 	@Modifying(clearAutomatically = true)
 	@Transactional
@@ -52,13 +54,15 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, 
 			@Param("one") Integer one, @Param("two") Integer two, @Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
 
-	boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
-			String state, Integer zipCode);
+	@Query(value = "select * from restaurant where is_active >= :active and average_rating >= :rating "
+			+ "and (price_category = :one or price_category = :two or price_category = :three or price_category = :four)"
+			+ " order by average_rating desc", nativeQuery = true)
+	List<Restaurant> findAllSortByAverageRating(@Param("active") Integer active, @Param("rating") Double rating, @Param("one") Integer one, @Param("two") Integer two, 
+			@Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
 
-	@Query(value = "select * from restaurant where is_active >= :active and average_rating >= :rating  order by average_rating desc", nativeQuery = true)
-	List<Restaurant> findAllSortByAverageRating(@Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
-
-	List<Restaurant> findByIsActiveGreaterThanEqualAndAverageRatingGreaterThanEqual(Integer active, Double rating, Pageable pageRequest);
-
-	
+	@Query(value = "select * from restaurant where is_active >= :active and average_rating >= :rating "
+			+ "and (price_category = :one or price_category = :two or price_category = :three or price_category = :four) "
+			+ "order by name asc", nativeQuery = true)
+	List<Restaurant> findAllSortByName(@Param("active") Integer active, @Param("rating") Double rating, @Param("one") Integer one, @Param("two") Integer two, 
+			@Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
 }

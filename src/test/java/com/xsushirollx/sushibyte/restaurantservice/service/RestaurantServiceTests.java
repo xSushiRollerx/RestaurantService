@@ -93,22 +93,29 @@ public class RestaurantServiceTests {
 
 	@Test
 	public void getAllRestaurantsSortByName() {
-		List<RestaurantDTO> results = rservice.getAllRestaurants(0, 5, 1.0, "a-to-z", 0);
+		Map<String, String> params = new HashMap<>();
+        params.put("priceCategory", "1, 3, 4");
+        
+		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 1.0, "a-to-z", 0);
 		log.info("Sort By Name: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) >= 0);
 			assert (results.get(i).getAverageRating() >= 1);
+			assert(results.get(i).getPriceCategory() != 2);
 		}
 	}
 
 	@Test
 	public void getAllRestaurantsSortByRating() {
-		List<RestaurantDTO> results = rservice.getAllRestaurants(0, 5, 4.0, "ratings", 0);
+		Map<String, String> params = new HashMap<>();
+        params.put("priceCategory", "1, 2, 4");
+		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 4.0, "ratings", 0);
 		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			log.info("Round" + i + " " + (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0 ? "true" : "false"));
 			assert (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0);
 			assert (results.get(i).getAverageRating() >= 3);
+			assert(results.get(i).getPriceCategory() != 3);
 		}
 	}
 
@@ -147,6 +154,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "a-to-z");
+		params.put("priceCategory", "1, 4");
 		String[] keywords = { "american|burger"};
 		List<RestaurantDTO> result = rservice.search(params, 2.0, 5, keywords, 1);
 		
@@ -156,6 +164,9 @@ public class RestaurantServiceTests {
 		for (int i = 0; i < result.size(); i++) {
 			assertEquals(1, result.get(i).getIsActive());
 			assert (result.get(i).getAverageRating() >= 2);
+			assert(result.get(i).getPriceCategory() != 3);
+			assert(result.get(i).getPriceCategory() != 2);
+			assert(result.get(i).getPriceCategory() != 3);
 		}
 	}
 
@@ -166,6 +177,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "ratings");
+		params.put("priceCategory", "1, 3");
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, 1.0, 5, keywords, 0);
@@ -173,6 +185,8 @@ public class RestaurantServiceTests {
 		for (int i = 1; i < results.size(); i++) {
 			assert (results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) < 0);
 			assert (results.get(i).getAverageRating() >= 1);
+			assert(results.get(i).getPriceCategory() != 2);
+			assert(results.get(i).getPriceCategory() != 4);
 		}
 
 	}
@@ -185,13 +199,15 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "a-to-z");
 		String[] keywords = { "burgers", "tacos", "burritos" };
-
+		params.put("priceCategory", "2");
 		List<RestaurantDTO> results = rservice.search(params, 1.0, 5, keywords, 0);
 
 		for (int i = 1; i < results.size(); i++) {
 			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
 			assert (results.get(i).getAverageRating() >= 1);
+			assert(results.get(i).getPriceCategory() == 2);
 		}
+		
 
 	}
 	
@@ -202,6 +218,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "relevance");
+		params.put("priceCategory", "2, 3, 4");
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, 2.0, 5, keywords, 0);
@@ -211,6 +228,7 @@ public class RestaurantServiceTests {
 			assert (results.get(i).getRelevance() - (results.get(i - 1).getRelevance()) <= 0);
 			assert(results.get(i).getRelevance() != 0);
 			assert (results.get(i).getAverageRating() >= 2);
+			assert(results.get(i).getPriceCategory() != 1);
 		}
 
 	}

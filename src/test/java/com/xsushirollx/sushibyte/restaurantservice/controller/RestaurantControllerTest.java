@@ -119,6 +119,7 @@ public class RestaurantControllerTest {
 
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getAllRestaurants200() {
 		List<RestaurantDTO> result = new ArrayList<>();
@@ -127,7 +128,7 @@ public class RestaurantControllerTest {
 		for (int i = 0; i < restaurants.size(); i++) {
 			result.add(new RestaurantDTO(restaurants.get(i)));
 		}
-		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
+		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
 		
 		try {
 			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
@@ -137,6 +138,7 @@ public class RestaurantControllerTest {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void getAllRestaurants403() {
 		String token  = "Bearer " + util.generateToken("96");
@@ -146,7 +148,7 @@ public class RestaurantControllerTest {
 		for (int i = 0; i < restaurants.size(); i++) {
 			result.add(new RestaurantDTO(restaurants.get(i)));
 		}
-		when(rservice.getAllRestaurants(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
+		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
 		
 		try {
 			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically&&active=2").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
