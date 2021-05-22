@@ -37,16 +37,20 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
 			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
 			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) "
+			+ "and (restaurant.price_category = :one or restaurant.price_category = :two or restaurant.price_category = :three or restaurant.price_category = :four)"
 			+ "and (restaurant.average_rating >= :rating) group by restaurant.id "
 			+ "order by restaurant.name", nativeQuery = true)
-	List<Restaurant> findByKeywordsSortByName(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
+	List<Restaurant> findByKeywordsSortByName(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, 
+			@Param("one") Integer one, @Param("two") Integer two, @Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
 	
 	@Query(value = "select * from restaurant join food on restaurant.id = food.restaurant_id where "
-			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords "
-			+ "or food.name regexp :keywords or food.summary regexp :keywords) and (restaurant.is_active = 1 or restaurant.is_active = :active) "
-			+ "and (restaurant.average_rating >= :rating) group by restaurant.id "
-			+ "order by restaurant.average_rating desc", nativeQuery = true)
-	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, Pageable pageRequest);
+			+ "(restaurant.name regexp :keywords or restaurant.tags regexp :keywords or food.name regexp :keywords or food.summary regexp :keywords) "
+			+ "and (restaurant.is_active = 1 or restaurant.is_active = :active) "
+			+ "and (restaurant.average_rating >= :rating) "
+			+ "and (restaurant.price_category = :one or restaurant.price_category = :two or restaurant.price_category = :three or restaurant.price_category = :four)"
+			+ " group by restaurant.id order by restaurant.average_rating desc", nativeQuery = true)
+	List<Restaurant> findByKeywordsSortByRating(@Param("keywords") String keywords, @Param("active") Integer active, @Param("rating") Double rating, 
+			@Param("one") Integer one, @Param("two") Integer two, @Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
 
 	boolean existsByNameAndStreetAddressAndCityAndStateAndZipCode(String name, String streetAddress, String city,
 			String state, Integer zipCode);

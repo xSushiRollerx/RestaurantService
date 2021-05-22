@@ -134,21 +134,26 @@ public class RestaurantDAOTests {
 	
 	@Test
 	public void findByKeywordsSortByName() {
-		List<Restaurant> results = rdao.findByKeywordsSortByName("american|burrito", 0, 4.0, PageRequest.of(0, 250)); 
+		List<Restaurant> results = rdao.findByKeywordsSortByName("american|burrito", 0, 4.0, 0, 2, 3, 4, PageRequest.of(0, 250)); 
 		log.info("Sort By Name: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert(results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) >= 0);
 			assert (results.get(i).getAverageRating() >= 4.0);
+			assert(results.get(i).getPriceCategory() != 1);
 		}
 	}
 	
 	@Test
 	public void findByKeywordsSortByRating() {
-		List<Restaurant> results = rdao.findByKeywordsSortByRating("american|burrito", 0, 3.0, PageRequest.of(0, 250)); 
+		List<Restaurant> results = rdao.findByKeywordsSortByRating("american|burrito", 0, 3.0, 1, 0, 3, 4, PageRequest.of(0, 25)); 
 		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert(results.get(i).getAverageRating() - (results.get(i - 1).getAverageRating()) <= 0);
-			assert (results.get(i).getAverageRating() >= 3.0);
+			assert (results.get(i).getAverageRating() >= 2.0);
+			if (results.get(i).getPriceCategory() == 2) {
+				log.info("Price Category = 2 " + results.get(i));
+			}
+			assert(results.get(i).getPriceCategory() != 2);
 		}
 	}
 	

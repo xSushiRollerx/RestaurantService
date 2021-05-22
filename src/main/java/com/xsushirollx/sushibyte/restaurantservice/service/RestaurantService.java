@@ -110,10 +110,10 @@ public class RestaurantService {
 		}
 		switch (params.get("sort")) {
 		case "a-to-z":
-			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active, rating,
+			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active, rating, one, two, three, four,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		case "ratings":
-			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating,
+			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
 					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 		default:
 			List<RestaurantDTO> restaurants = dataTransferRelevance(
