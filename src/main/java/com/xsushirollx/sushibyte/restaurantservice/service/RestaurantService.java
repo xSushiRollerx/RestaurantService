@@ -7,6 +7,7 @@ import com.xsushirollx.sushibyte.restaurantservice.model.RelevanceSearch;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
@@ -48,25 +49,26 @@ public class RestaurantService {
 			four = 4;
 		}
 
+		Page<Restaurant> restaurants = null;
 		switch (sort) {
 		case "a-to-z":
-			return Arrays.asList(repository
-					.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
-					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
+			restaurants = repository.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize));
+			break;
 		case "ratings":
-			log.info("In Average Rating: ");
-			return Arrays.asList(repository.findAllSortByAverageRating(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
-					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
+			restaurants = repository.findAllSortByAverageRating(active, rating, one, two, three, four, PageRequest.of(page, pageSize));
+			break;
 		default:
-			return Arrays.asList(repository
-					.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize))
-					.stream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
+			restaurants = repository.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize));
+			break;
 		}
+		Long totalElements = restaurants.getTotalElements();
+		Integer totalPages = restaurants.getTotalPages();
+		return restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
 	}
 
 	public RestaurantDTO findById(Long id) {
 		Optional<Restaurant> r = repository.findById(id);
-		return r.isPresent() ? new RestaurantDTO(r.get()) : null;
+		return r.isPresent() ? new RestaurantDTO(r.get(), null, null) : null;
 	}
 
 	public boolean addNewRestaurant(RestaurantDTO newRestaurant) {
@@ -122,34 +124,45 @@ public class RestaurantService {
 		if (params.get("priceCategory").contains("4")) {
 			four = 4;
 		}
+		
+		Page<Restaurant> restaurants = null;
+		List<RestaurantDTO> results = null;
+		
 		switch (params.get("sort")) {
 		case "a-to-z":
-			return dataTransfer(repository.findByKeywordsSortByName(regex.substring(1), active, rating, one, two, three, four,
-					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
+			restaurants = repository.findByKeywordsSortByName(regex.substring(1), active, rating, one, two, three, four, 
+					PageRequest.of(Integer.parseInt(params.get("page")), pageSize));
+			Long totalElements = restaurants.getTotalElements();
+			Integer totalPages = restaurants.getTotalPages();
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
+			break; 
 		case "ratings":
-			return dataTransfer(repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
-					PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
+			restaurants = repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
+					PageRequest.of(Integer.parseInt(params.get("page")), pageSize));
+			
+			Long totalElementsRatings = restaurants.getTotalElements();
+			Integer totalPagesRatings = restaurants.getTotalPages();
+			
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).toList();
+			break;
 		default:
-			List<RestaurantDTO> restaurants = dataTransferRelevance(
+			results = dataTransferRelevance(
 					relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
 							three, four, PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
 
-			if (restaurants.size() > 0 && restaurants.get(restaurants.size() - 1).getRelevance() == 0) {
-				restaurants = new ArrayList<>(restaurants);
-				restaurants.removeIf(r -> r.getRelevance() == 0);
+			if (results.size() > 0 && results.get(results.size() - 1).getRelevance() == 0) {
+				results = new ArrayList<>(results);
+				results.removeIf(r -> r.getRelevance() == 0);
 			}
-			return restaurants;
+			break;
 		}
+		return results;
 	}
 
-	private List<RestaurantDTO> dataTransfer(List<Restaurant> restaurants) {
-		log.entering("RestaurantService", "dataTransfer");
-		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
-	}
-
+	
 	private List<RestaurantDTO> dataTransferRelevance(List<RelevanceSearch> restaurants) {
 		log.entering("RestaurantService", "dataTransfer");
-		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r)).toArray(RestaurantDTO[]::new));
+		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r, null, null)).toArray(RestaurantDTO[]::new));
 	}
 
 }

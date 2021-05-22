@@ -47,10 +47,14 @@ public class RestaurantDTO {
     private List<FoodDTO> menu;
     
     private Double relevance = (double) 0;
+    
+    private Long resultSize;
+    
+    private Integer totalPages;
 
     public RestaurantDTO(){};
     
-    public RestaurantDTO(Restaurant restaurant) {
+    public RestaurantDTO(Restaurant restaurant, Long resultSize, Integer totalPages) {
     	
     	this.id = restaurant.getId();
     	this.name = restaurant.getName();
@@ -63,6 +67,8 @@ public class RestaurantDTO {
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
 		this.relevance = restaurant.getRelevance();
+		this.resultSize = resultSize;
+		this.totalPages = totalPages;
 		
 		if (restaurant.getMenu() != null) {
 			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
@@ -83,7 +89,7 @@ public class RestaurantDTO {
         this.zipCode = zipCode;
     }
 
-    public RestaurantDTO(RelevanceSearch restaurant) {
+    public RestaurantDTO(RelevanceSearch restaurant , Long resultSize, Integer totalPages) {
     	this.id = restaurant.getId();
     	this.name = restaurant.getName();
 		this.priceCategory = restaurant.getPriceCategory();
@@ -95,6 +101,8 @@ public class RestaurantDTO {
 		this.state = restaurant.getState();
 		this.zipCode = restaurant.getZipCode();
 		this.relevance = restaurant.getRelevance();
+		this.resultSize = resultSize;
+		this.totalPages = totalPages;
 		
 		if (restaurant.getMenu() != null) {
 			this.setMenu(Arrays.asList(restaurant.getMenu().parallelStream().map(m -> new FoodDTO(m)).toArray(FoodDTO[]::new)));
@@ -203,6 +211,14 @@ public class RestaurantDTO {
 
 	public void setRelevance(Double  relevance) {
 		this.relevance = relevance;
+	}
+
+	public Long getResultSize() {
+		return resultSize;
+	}
+
+	public Integer getTotalPages() {
+		return totalPages;
 	}
 
 	@Override

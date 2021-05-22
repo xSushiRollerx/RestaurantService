@@ -128,14 +128,14 @@ public class RestaurantServiceTests {
 
 	@Test
 	public void addNewRestaurant() {
-		assert (!rservice.addNewRestaurant(new RestaurantDTO(testRestaurants.get(0))));
+		assert (!rservice.addNewRestaurant(new RestaurantDTO(testRestaurants.get(0), null, null)));
 	}
 
 	@Test
 	public void updateRestaurant() {
 
 		testRestaurants.get(0).setTags("american, southern, burger, fries, comfort food");
-		rservice.updateRestaurant(new RestaurantDTO(testRestaurants.get(0)), testRestaurants.get(0).getId());
+		rservice.updateRestaurant(new RestaurantDTO(testRestaurants.get(0), null, null), testRestaurants.get(0).getId());
 		assertEquals(rdao.findById(testRestaurants.get(0).getId()).get().getTags(),
 				"american, southern, burger, fries, comfort food");
 
