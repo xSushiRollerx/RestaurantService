@@ -296,7 +296,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void search403() {
 		String token  = "Bearer " + util.generateToken("96");
-		when(rservice.search(Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(String[].class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
+		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
 			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger&&active=0").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -310,7 +310,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void search200() {
 		String token  = "Bearer " + util.generateToken("96");
-		when(rservice.search(Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(String[].class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
+		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
 		
 		try {
 			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))

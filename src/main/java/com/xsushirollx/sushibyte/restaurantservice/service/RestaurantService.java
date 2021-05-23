@@ -107,7 +107,7 @@ public class RestaurantService {
 		return true;
 	}
 
-	public List<RestaurantDTO> search(Integer page, Map<String, String> params, Double rating, Integer pageSize, String[] keywords,
+	public List<RestaurantDTO> search(Integer page, Map<String, String> params, Double rating, Integer pageSize, List<String> keywords,
 			Integer active) {
 		String regex = "";
 		Integer one = 0;

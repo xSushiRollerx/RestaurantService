@@ -155,7 +155,10 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "a-to-z");
 		params.put("priceCategories", "1, 4");
-		String[] keywords = { "american|burger"};
+		List<String> keywords = new ArrayList<>();
+		keywords.add("burgers");
+		keywords.add("american");
+		
 		List<RestaurantDTO> result = rservice.search(0, params, 2.0, 5, keywords, 1);
 		
 		log.info("Search Security" + result);
@@ -178,7 +181,10 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "ratings");
 		params.put("priceCategories", "1, 3");
-		String[] keywords = { "burgers", "tacos", "burritos" };
+		List<String> keywords = new ArrayList<>();
+		keywords.add("burgers");
+		keywords.add("tacos");
+		keywords.add("burritos");
 
 		List<RestaurantDTO> results = rservice.search(0, params, 1.0, 5, keywords, 0);
 
@@ -197,11 +203,15 @@ public class RestaurantServiceTests {
 
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
-		params.put("sort", "a-to-z");
-		String[] keywords = { "burgers", "tacos", "burritos" };
 		params.put("priceCategories", "2");
+		params.put("sort", "a-to-z");
+		List<String> keywords = new ArrayList<>();
+		keywords.add("burgers");
+		keywords.add("tacos");
+		keywords.add("burritos");
+		
+		
 		List<RestaurantDTO> results = rservice.search(0, params, 1.0, 5, keywords, 0);
-
 		for (int i = 1; i < results.size(); i++) {
 			assert (results.get(i).getName().compareToIgnoreCase(results.get(i - 1).getName()) > 0);
 			assert (results.get(i).getAverageRating() >= 1);
@@ -219,7 +229,10 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "relevance");
 		params.put("priceCategories", "2, 3, 4");
-		String[] keywords = { "burgers", "tacos", "burritos" };
+		List<String> keywords = new ArrayList<>();
+		keywords.add("burgers");
+		keywords.add("tacos");
+		keywords.add("burritos");
 
 		List<RestaurantDTO> results = rservice.search(0, params, 2.0, 5, keywords, 0);
 
