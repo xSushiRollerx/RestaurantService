@@ -9,7 +9,6 @@ import javax.persistence.FetchType;
 import javax.persistence.FieldResult;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.NamedNativeQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SqlResultSetMapping;
 import javax.validation.constraints.Max;
@@ -19,13 +18,6 @@ import javax.validation.constraints.Size;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 
 @Entity
-@NamedNativeQuery(name = "RelevanceSearch.findByKeywordsSortByRelevance",
-		query = "select restaurant.*, (sum(if(food.name regexp :keywords, 1 ,0)) + sum(if(food.summary regexp :keywords, 1.5, 0)) + "
-				+ "if(restaurant.name regexp :keywords, 1, 0) + if(restaurant.tags regexp :keywords, 2, 0)) as relevance from restaurant "
-				+ "left join food on restaurant.id = food.restaurant_id where (restaurant.is_active >= :active) "
-				+ "and (restaurant.average_rating >= :rating) "
-				+ "and (restaurant.price_category = :one or restaurant.price_category = :two or restaurant.price_category = :three or restaurant.price_category = :four)"
-				+ "group by restaurant.id order by relevance desc", resultSetMapping = "RelevanceSort")
 @SqlResultSetMapping(name = "RelevanceSort", entities = {
 		@EntityResult(entityClass = RelevanceSearch.class, fields = {
 				@FieldResult(column = "id", name = "id"),

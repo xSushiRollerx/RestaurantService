@@ -12,7 +12,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -108,7 +107,7 @@ public class RestaurantService {
 		return true;
 	}
 
-	public List<RestaurantDTO> search(Map<String, String> params, Double rating, Integer pageSize, String[] keywords,
+	public List<RestaurantDTO> search(Integer page, Map<String, String> params, Double rating, Integer pageSize, String[] keywords,
 			Integer active) {
 		String regex = "";
 		Integer one = 0;
@@ -146,14 +145,14 @@ public class RestaurantService {
 		switch (params.get("sort")) {
 		case "a-to-z":
 			restaurants = repository.findByKeywordsSortByName(regex.substring(1), active, rating, one, two, three, four, 
-					PageRequest.of(Integer.parseInt(params.get("page")), pageSize));
+					PageRequest.of(page, pageSize));
 			Long totalElements = restaurants.getTotalElements();
 			Integer totalPages = restaurants.getTotalPages();
 			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
 			break; 
 		case "ratings":
 			restaurants = repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
-					PageRequest.of(Integer.parseInt(params.get("page")), pageSize));
+					PageRequest.of(page, pageSize));
 			
 			Long totalElementsRatings = restaurants.getTotalElements();
 			Integer totalPagesRatings = restaurants.getTotalPages();
@@ -161,23 +160,20 @@ public class RestaurantService {
 			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).toList();
 			break;
 		default:
-			results = dataTransferRelevance(
-					relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
-							three, four, PageRequest.of(Integer.parseInt(params.get("page")), pageSize)));
+			Page<RelevanceSearch> relevantRestaurants = relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
+					three, four, PageRequest.of(page, pageSize));
+			Long totalElementsRelevance = relevantRestaurants.getTotalElements();
+			Integer totalPagesRelevance = relevantRestaurants.getTotalPages();
+			results = relevantRestaurants.map(r -> new RestaurantDTO(r, totalElementsRelevance, totalPagesRelevance)).toList();
 
-			if (results.size() > 0 && results.get(results.size() - 1).getRelevance() == 0) {
+			if (totalPagesRelevance == page + 1) {
 				results = new ArrayList<>(results);
 				results.removeIf(r -> r.getRelevance() == 0);
 			}
 			break;
 		}
+		log.info(results.toString());
 		return results;
-	}
-
-	
-	private List<RestaurantDTO> dataTransferRelevance(List<RelevanceSearch> restaurants) {
-		log.entering("RestaurantService", "dataTransfer");
-		return Arrays.asList(restaurants.parallelStream().map(r -> new RestaurantDTO(r, null, null)).toArray(RestaurantDTO[]::new));
 	}
 
 }
