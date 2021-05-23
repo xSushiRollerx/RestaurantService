@@ -35,19 +35,27 @@ public class RestaurantService {
 		Integer two = 0;
 		Integer three = 0;
 		Integer four = 0;
-		
-		if (params.get("priceCategory").contains("1")) {
+		if (params.containsKey("priceCategories")) {
+			if (params.get("priceCategories").contains("1")) {
+				one = 1;
+			}
+			if (params.get("priceCategories").contains("2")) {
+				two = 2;
+			}
+			if (params.get("priceCategories").contains("3")) {
+				three = 3;
+			}
+			if (params.get("priceCategories").contains("4")) {
+				four = 4;
+			}
+		} else {
 			one = 1;
-		}
-		if (params.get("priceCategory").contains("2")) {
 			two = 2;
-		}
-		if (params.get("priceCategory").contains("3")) {
 			three = 3;
-		}
-		if (params.get("priceCategory").contains("4")) {
 			four = 4;
 		}
+		
+		
 
 		Page<Restaurant> restaurants = null;
 		switch (sort) {
@@ -112,16 +120,23 @@ public class RestaurantService {
 			regex += "|" + k;
 		}
 		
-		if (params.get("priceCategory").contains("1")) {
+		if (params.containsKey("priceCategories")) {
+			if (params.get("priceCategories").contains("1")) {
+				one = 1;
+			}
+			if (params.get("priceCategories").contains("2")) {
+				two = 2;
+			}
+			if (params.get("priceCategories").contains("3")) {
+				three = 3;
+			}
+			if (params.get("priceCategories").contains("4")) {
+				four = 4;
+			}
+		} else {
 			one = 1;
-		}
-		if (params.get("priceCategory").contains("2")) {
 			two = 2;
-		}
-		if (params.get("priceCategory").contains("3")) {
 			three = 3;
-		}
-		if (params.get("priceCategory").contains("4")) {
 			four = 4;
 		}
 		

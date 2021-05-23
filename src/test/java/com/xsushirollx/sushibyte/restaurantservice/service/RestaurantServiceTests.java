@@ -94,7 +94,7 @@ public class RestaurantServiceTests {
 	@Test
 	public void getAllRestaurantsSortByName() {
 		Map<String, String> params = new HashMap<>();
-        params.put("priceCategory", "1, 3, 4");
+        params.put("priceCategories", "1, 3, 4");
         
 		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 1.0, "a-to-z", 0);
 		log.info("Sort By Name: " + results.toString());
@@ -108,7 +108,7 @@ public class RestaurantServiceTests {
 	@Test
 	public void getAllRestaurantsSortByRating() {
 		Map<String, String> params = new HashMap<>();
-        params.put("priceCategory", "1, 2, 4");
+        params.put("priceCategories", "1, 2, 4");
 		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 4.0, "ratings", 0);
 		log.info("Sort By Rating: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
@@ -154,7 +154,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "a-to-z");
-		params.put("priceCategory", "1, 4");
+		params.put("priceCategories", "1, 4");
 		String[] keywords = { "american|burger"};
 		List<RestaurantDTO> result = rservice.search(params, 2.0, 5, keywords, 1);
 		
@@ -177,7 +177,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "ratings");
-		params.put("priceCategory", "1, 3");
+		params.put("priceCategories", "1, 3");
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, 1.0, 5, keywords, 0);
@@ -199,7 +199,7 @@ public class RestaurantServiceTests {
 		params.put("page", "0");
 		params.put("sort", "a-to-z");
 		String[] keywords = { "burgers", "tacos", "burritos" };
-		params.put("priceCategory", "2");
+		params.put("priceCategories", "2");
 		List<RestaurantDTO> results = rservice.search(params, 1.0, 5, keywords, 0);
 
 		for (int i = 1; i < results.size(); i++) {
@@ -218,7 +218,7 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "relevance");
-		params.put("priceCategory", "2, 3, 4");
+		params.put("priceCategories", "2, 3, 4");
 		String[] keywords = { "burgers", "tacos", "burritos" };
 
 		List<RestaurantDTO> results = rservice.search(params, 2.0, 5, keywords, 0);
