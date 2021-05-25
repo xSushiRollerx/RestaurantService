@@ -76,12 +76,14 @@ public class RelevanceSearchDAOTests {
 	}
 
 	
+
 	@Test
-	public void findByKeywordsSortByRating() {
-		List<RelevanceSearch> results = rsdao.findByKeywordsSortByRelevance("american|burrito|sushi|roll|bread", 0, PageRequest.of(0, 250)); 
+	public void findByRelevance() {
+		List<RelevanceSearch> results = new ArrayList<>(rsdao.findByKeywordsSortByRelevance("sushi|hello|queen", 0.0, 0, 1, 2, 3, 4, PageRequest.of(0, 20)).toList());  
 		log.info("Sort By Relevance: " + results.toString());
 		for (int i = 1; i < results.size(); i++) {
 			assert(results.get(i).getRelevance() - (results.get(i - 1).getRelevance()) <= 0);
+			assert (results.get(i).getAverageRating() >= 0.0);
 		}
 	}
 }
