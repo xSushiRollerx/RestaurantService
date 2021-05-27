@@ -253,9 +253,26 @@ public class RestaurantControllerTest {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenReturn(false);
 		
+		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
+		
 		try {
-			mockMvc.perform(post("/restaurant").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new RestaurantDTO())).header("Authorization", token))
+			mockMvc.perform(post("/restaurant").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)).header("Authorization", token))
 					.andExpect(status().isBadRequest());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void addNewRestaurant500() {
+		String token  = "Bearer " + util.generateToken("98");
+		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenThrow(NumberFormatException.class);
+		
+		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
+		
+		try {
+			mockMvc.perform(post("/restaurant").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(r)).header("Authorization", token))
+					.andExpect(status().isInternalServerError());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
