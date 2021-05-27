@@ -140,6 +140,26 @@ public class RestaurantControllerTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
+	public void getAllRestaurants500() {
+		List<RestaurantDTO> result = new ArrayList<>();
+		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
+		
+		for (int i = 0; i < restaurants.size(); i++) {
+			result.add(new RestaurantDTO(restaurants.get(i), null, null));
+		}
+		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt()))
+		.thenThrow(NumberFormatException.class);
+		
+		try {
+			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
+					.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
 	public void getAllRestaurants403() {
 		String token  = "Bearer " + util.generateToken("96");
 		List<RestaurantDTO> result = new ArrayList<>();
@@ -180,6 +200,20 @@ public class RestaurantControllerTest {
 		try {
 			mockMvc.perform(get("/restaurant/" + testRestaurants.get(0).getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
 					.andExpect(status().isNotFound());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
+	public void getRestaurant400() {
+		String token  = "Bearer " + util.generateToken("98");
+		when(rservice.findById(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		
+		
+		try {
+			mockMvc.perform(get("/restaurant/" + testRestaurants.get(0).getId()).contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+					.andExpect(status().isInternalServerError());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -254,6 +288,19 @@ public class RestaurantControllerTest {
 	}
 	
 	@Test
+	public void updateRestaurant500() {
+		String token  = "Bearer " + util.generateToken("98");
+		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		
+		try {
+			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+					.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	@Test
 	public void updateRestaurant403() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(false);
@@ -291,6 +338,19 @@ public class RestaurantControllerTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	public void deleteRestaurant500() {
+		String token  = "Bearer " + util.generateToken("98");
+		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		
+		try {
+			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+					.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -319,5 +379,20 @@ public class RestaurantControllerTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Test
+	public void search500() {
+		String token  = "Bearer " + util.generateToken("96");
+		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenThrow(NumberFormatException.class);
+		
+		try {
+			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
+					.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 	
 }
