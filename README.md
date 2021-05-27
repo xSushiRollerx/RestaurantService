@@ -3,7 +3,7 @@ Open [http://localhost:8040](http://localhost:8040) to view it in the browser.
 ## Get All Restaurants
 ### `/restaurants/all/{page}`
 
-######Parameters
+###### Parameters
 *sort*
     - "default" - returns values sorted by restaurant id
     - "rating"  - returns values sorted by greatest to smallest rating 
