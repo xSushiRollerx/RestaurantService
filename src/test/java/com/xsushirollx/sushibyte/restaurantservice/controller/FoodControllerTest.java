@@ -1,174 +1,189 @@
-//package com.xsushirollx.sushibyte.restaurantservice.controller;
-//
-//import com.xsushirollx.sushibyte.restaurantservice.dao.FoodRepository;
-//import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantRepository;
-//import com.xsushirollx.sushibyte.restaurantservice.model.Food;
-//import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
-//import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
-//import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
-//import org.hamcrest.Matchers;
-//import org.junit.jupiter.api.DisplayName;
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-//import org.springframework.http.MediaType;
-//import org.springframework.test.web.servlet.MockMvc;
-//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-//import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-//
-//import java.util.Arrays;
-//
-//import static org.junit.jupiter.api.Assertions.*;
-//
-//@WebMvcTest(controllers = FoodController.class)
-//public class FoodControllerTest {
-//
-//    @MockBean
-//    private FoodRepository repository;
-//    @MockBean
-//    private RestaurantService restaurantControllerService;
-//    @MockBean
-//    private RestaurantRepository restaurantRepository;
-//    @MockBean
-//    private FoodService foodControllerService;
-//    @MockBean
-//    private FoodController foodController;
-//
-//    @Autowired
-//    private MockMvc mockMvc;
-//
-//
-//    @Test
-//    @DisplayName("Should return a List of Food Menu Items")
-//    void getAllFoodMenuItems() throws Exception {
-//
-//        Food food1 = new Food(1,"Pizza slice",
-//                1.22,"Pic goes here","chesse slice", 2,
-//                1, 1);
-//        food1.setId(1L);
-//
-//        Food food2 = new Food(2,"Pizza slice",
-//                1.42,"Pic goes here","pep slice", 3,
-//                1, 1);
-//        food2.setId(2L);
-//
-//        Mockito.when(repository.findAll()).
-//                thenReturn(Arrays.asList(food1,food2));
-//
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/food"))
-//                .andExpect(MockMvcResultMatchers.status().is(200))
-//                .andExpect(MockMvcResultMatchers.content().
-//                        contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.greaterThan(0)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id", Matchers.is(1)))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id", Matchers.is(2)));
-//
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Should return a single Food Menu Item")
-//    void getOneFoodMenuItem() throws Exception {
-//
-//        Food food1 = new Food(1,"Pizza slice",
-//                1.22,"Pic goes here","chesse slice", 2,
-//                1, 1);
-//        food1.setId(1L);
-//
-//
-//        Mockito.when(repository.findById(1L)).thenReturn(java.util.Optional.of((food1)));
-//
-//        mockMvc.perform(MockMvcRequestBuilders.get("/food/1"))
-//                .andExpect(MockMvcResultMatchers.status().is(200))
-//                .andExpect(MockMvcResultMatchers.content().
-//                        contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.greaterThan(0)));
-//    }
-//
-//    @Test
-//    @DisplayName("Should add a new Food Menu Item")
-//    void addNewFoodMenuItem() throws Exception {
-//
-//        String mockFoodJson = "{\"id\": 7, \"restaurantID\": 5, \"name\": \"Fries\", \"cost\": 91.18, \"image\": \"pic here\",    \"summary\": \"tasty food\", \"special\": 3, \"isActive\": 0, \"category\": 2}";
-//
-//        Food food1 = new Food(1,"Pizza slice",
-//                1.22,"Pic goes here","chesse slice", 2,
-//                1, 1);
-//        food1.setId(1L);
-//
-//        Mockito.when(repository.save(food1)).thenReturn(food1);
-//
-//        /*MvcResult result =*/
-//        mockMvc.perform(MockMvcRequestBuilders.post("/food")
-//
-//                // Send mockRestaurantJson as RequestBody to post /restaurant
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(mockFoodJson)
-//
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().is(201))
-//                .andReturn();
-//
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Should Update a current Food Menu Item")
-//    void updateFood() throws Exception {
-//
-//        String mockFoodJson = "{\"id\": 7, \"restaurantID\": 5, \"name\": \"Fries\", \"cost\": 91.18, \"image\": \"pic here\",    \"summary\": \"tasty food\", \"special\": 3, \"isActive\": 0, \"category\": 2}";
-//
-//
-//        Food food1 = new Food(5,"Fries",
-//                1.22,"Pic goes here","chesse slice", 2,
-//                1, 1);
-//        food1.setId(77L);
-//        Restaurant restaurant1 = new Restaurant("Pizza town",
-//                1, 2.3,
-//                "Pizza and salads", 1, "123 st",
-//                "Hialeah", "FL", 12345);
-//        restaurant1.setId(5L);
-//
-//        Mockito.when(repository.findById(8L)).thenReturn(java.util.Optional.of(food1));
-//
-//        Mockito.when(repository.save(food1)).thenReturn(food1);
-//
-//        Mockito.when(restaurantRepository.findById(food1.getRestaurantID().longValue()))
-//                .thenReturn(java.util.Optional.of(restaurant1));
-//
-//        /*MvcResult result =*/
-//        mockMvc.perform(MockMvcRequestBuilders.put("/food/8")
-//
-//                // Send mockRestaurantJson as RequestBody to post /restaurant
-//                .accept(MediaType.APPLICATION_JSON)
-//                .content(mockFoodJson)
-//
-//                .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.status().is(200))
-//                .andReturn();
-//
-//    }
-//
-//    @Test
-//    @DisplayName("Should change the FoodMenuItem isActive Status to zero")
-//    void setFoodMenuItemToInActive() throws Exception {
-//
-//        Food food1 = new Food(1,"Pizza slice",
-//                1.22,"Pic goes here","chesse slice", 2,
-//                1, 1);
-//        food1.setId(1L);
-//
-//
-//        Mockito.when(repository.findById(1L)).thenReturn(java.util.Optional.of((food1)));
-//
-//        mockMvc.perform(MockMvcRequestBuilders.delete("/food/1"))
-//                .andExpect(MockMvcResultMatchers.status().is(200))
-//                .andExpect(MockMvcResultMatchers.content().
-//                        contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(MockMvcResultMatchers.jsonPath("$.size()", Matchers.greaterThan(0)));
-//
-//    }
-//}
+package com.xsushirollx.sushibyte.restaurantservice.controller;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
+import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
+import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
+import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
+
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@AutoConfigureMockMvc
+@SpringBootTest
+public class FoodControllerTest {
+
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    FoodService fservice;
+    
+    @Autowired
+	JWTUtil util;
+	
+	@Autowired
+	ObjectMapper objectMapper;
+	
+	@MockBean
+	RestaurantService rservice;
+    
+    @Test
+    @DisplayName("Get Food Item 200")
+    void getOneFoodItem200() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenReturn(new FoodDTO());
+    	
+    	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isOk());
+
+    }
+    
+    @Test
+    @DisplayName("Get Food Item 404")
+    void getOneFoodItem404() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
+    	
+    	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isNotFound());
+
+    }
+    
+    @Test
+    @DisplayName("Get Food Item 500")
+    void getOneFoodItem500() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+    	
+    	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @DisplayName("Add Food Item 201")
+    void addNewFoodItem201() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenReturn(new FoodDTO((long) 1,"Delete", 2.99, "test food to be deleted", 0, 1, "Delete"));
+    	
+    	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isCreated());
+
+    }
+    
+    @Test
+    @DisplayName("Add Food Item 400")
+    void addNewFoodItem400() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new Exception("Item Could Not Be Created. Food Item Already Exists."));
+    	
+    	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isBadRequest());
+
+    }
+    
+    @Test
+    @DisplayName("Add Food Item 500")
+    void addNewFoodItem500() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(NumberFormatException.class);
+    	
+    	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isInternalServerError());
+
+    }
+    
+    @Test
+    @DisplayName("Update Food Item 200")
+    void updateFoodItem200() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenReturn(new FoodDTO());
+    	
+    	mockMvc.perform(put("/food/77").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isOk());
+
+    }
+    
+    @Test
+    @DisplayName("Update Food Item 500")
+    void updateFoodItem500() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenThrow(NumberFormatException.class);
+    	
+    	mockMvc.perform(put("/food/12").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isInternalServerError());
+
+    }
+    
+    @Test
+    @DisplayName("Update Food Item 404")
+    void updateFoodItem404() throws Exception {
+    	String token  = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
+    	
+    	mockMvc.perform(put("/food/435").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+		.andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    @DisplayName("Delete Food Item 200")
+    void deleteFoodItem200() throws Exception {
+    	String token = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenReturn(true);
+    	
+    	mockMvc.perform(delete("/food/435").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("Delete Food Item 404")
+    void deleteFoodItem404() throws Exception {
+    	String token = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
+    	
+    	mockMvc.perform(delete("/food/35").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isNotFound());
+
+    }
+    
+    @Test
+    @DisplayName("Delete Food Item 500")
+    void deleteFoodItem500() throws Exception {
+    	String token = "Bearer " + util.generateToken("98");
+    	
+    	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+    	
+    	mockMvc.perform(delete("/food/24").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+		.andExpect(status().isInternalServerError());
+
+    }
+}

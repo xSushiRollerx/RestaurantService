@@ -70,19 +70,6 @@ public class FoodDTO {
         this.category = category;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        FoodDTO food = (FoodDTO) o;
-        return Objects.equals(restaurantID, food.restaurantID) && Objects.equals(name, food.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id);
-    }
-
     public Long getId() {
         return id;
     }
@@ -145,7 +132,21 @@ public class FoodDTO {
         }
     }
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
 
-
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FoodDTO other = (FoodDTO) obj;
+		return Objects.equals(id, other.id);
+	}
 
 }
