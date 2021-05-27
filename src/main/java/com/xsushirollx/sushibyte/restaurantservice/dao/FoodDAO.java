@@ -19,4 +19,6 @@ public interface FoodDAO extends JpaRepository<Food, Long> {
 
     @Query(value = "select food from Food food where food.name = :name and food.restaurantID = :restaurantID")
     Food checkForExistingFoodByValues(@Param("restaurantID") Long id, @Param("name") String name);
+
+	boolean existsByRestaurantIDAndName(Long restaurantID, String name);
 }
