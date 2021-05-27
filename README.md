@@ -1,7 +1,8 @@
 # RestaurantService
 Open [http://localhost:8040](http://localhost:8040) to view it in the browser.
-## Get All Restaurants
-### `/restaurants/all/{page}`
+#### Get All Restaurants
+##### `/restaurants/all/{page}`
+This endpdoint allows clients to sort and filter through all the restaurants as they would be able to in the search endpoint, however, it's only, limitation is that you cannot specify any keywords to use in the search.
 
 ###### Parameters
 *sort*
