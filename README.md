@@ -1,6 +1,6 @@
 # RestaurantService
 Open [http://localhost:8040](http://localhost:8040) to view it in the browser.
-#### Get All Restaurants
+#### Get All Restaurants - GET
 ##### `/restaurants/all/{page}`
 This endpdoint allows clients to sort and filter through all the restaurants as they would be able to in the search endpoint, however, it's only, limitation is that you cannot specify any keywords to use in the search.
 
@@ -28,3 +28,14 @@ This endpdoint allows clients to sort and filter through all the restaurants as 
 - 3 -    fine dining  - if specified returns restaurants marked as fine dating
 - 4 - high end luxury - if specified resturns restaurants marked as high end luxury
 - default value is "1, 2, 3, 4" or all
+
+
+#### Get Restaurant By Id - GET
+##### `/restaurants/{id}`
+
+Returns a single restaurant. It's name, active status, menu items e.t.c. However, only administrators can access deactivated restaurants. Active restaurants can be accessed by anyone. 
+
+#### Add Restaurant - POST
+##### `/restaurant`
+
+Only administrators can add a single new restaurant to the database. The ... fields all must be non null to be submitted successfully. 
