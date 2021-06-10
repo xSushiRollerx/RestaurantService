@@ -44,7 +44,6 @@ public class RestaurantControllerTest {
 	
 	@MockBean
 	RestaurantService rservice;
-	
 
 	RestaurantService realrservice = new RestaurantService();
 	
