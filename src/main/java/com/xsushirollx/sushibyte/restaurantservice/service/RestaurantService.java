@@ -70,7 +70,9 @@ public class RestaurantService {
 		}
 		Long totalElements = restaurants.getTotalElements();
 		Integer totalPages = restaurants.getTotalPages();
-		return restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
+		return restaurants
+				.map(r -> new RestaurantDTO(r, totalElements, totalPages))
+				.toList();
 	}
 
 	public RestaurantDTO findById(Long id) {
