@@ -68,11 +68,12 @@ public class RestaurantService {
 			restaurants = repository.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize));
 			break;
 		}
+		log.info(restaurants.toString());
 		Long totalElements = restaurants.getTotalElements();
 		Integer totalPages = restaurants.getTotalPages();
 		return restaurants
 				.map(r -> new RestaurantDTO(r, totalElements, totalPages))
-				.toList();
+				.getContent();
 	}
 
 	public RestaurantDTO findById(Long id) {
@@ -150,7 +151,7 @@ public class RestaurantService {
 					PageRequest.of(page, pageSize));
 			Long totalElements = restaurants.getTotalElements();
 			Integer totalPages = restaurants.getTotalPages();
-			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).getContent();
 			break; 
 		case "ratings":
 			restaurants = repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
@@ -159,14 +160,14 @@ public class RestaurantService {
 			Long totalElementsRatings = restaurants.getTotalElements();
 			Integer totalPagesRatings = restaurants.getTotalPages();
 			
-			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).toList();
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).getContent();
 			break;
 		default:
 			Page<RelevanceSearch> relevantRestaurants = relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
 					three, four, PageRequest.of(page, pageSize));
 			Long totalElementsRelevance = relevantRestaurants.getTotalElements();
 			Integer totalPagesRelevance = relevantRestaurants.getTotalPages();
-			results = relevantRestaurants.map(r -> new RestaurantDTO(r, totalElementsRelevance, totalPagesRelevance)).toList();
+			results = relevantRestaurants.map(r -> new RestaurantDTO(r, totalElementsRelevance, totalPagesRelevance)).getContent();
 
 			if (totalPagesRelevance == page + 1) {
 				results = new ArrayList<>(results);
