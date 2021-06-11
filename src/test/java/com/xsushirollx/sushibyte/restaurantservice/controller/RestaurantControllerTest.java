@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,13 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.xsushirollx.sushibyte.restaurantservice.dao.FoodDAO;
-import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
@@ -54,12 +50,6 @@ public class RestaurantControllerTest {
 	ObjectMapper objectMapper;
 	
 	RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
-	
-	@Autowired
-	private RestaurantDAO rdao;
-
-	@Autowired
-	private FoodDAO fdao;
 
 	private List<Restaurant> testRestaurants = new ArrayList<>();
 
@@ -75,7 +65,7 @@ public class RestaurantControllerTest {
 		testRestaurants.add(r2);
 
 		for (int i = 0; i < testRestaurants.size(); i++) {
-			rdao.saveAndFlush(testRestaurants.get(i));
+			testRestaurants.get(i).setId((long) i);
 		}
 
 		// Restaurant 1 Food
@@ -98,35 +88,15 @@ public class RestaurantControllerTest {
 		testFoods.add(f4);
 
 		for (int i = 0; i < testFoods.size(); i++) {
-			fdao.saveAndFlush(testFoods.get(i));
-		}
-
-		for (int i = 0; i < testRestaurants.size(); i++) {
-			testRestaurants.set(i, rdao.findById(testRestaurants.get(i).getId()).get());
+			testFoods.get(i).setId((long) i);
 		}
 	}
 
-	@AfterEach
-	public void tearDown() {
-		for (int i = 0; i < testRestaurants.size(); i++) {
-			rdao.deleteById(testRestaurants.get(i).getId());
-		}
-
-		for (int i = 0; i < testFoods.size(); i++) {
-			fdao.deleteById(testFoods.get(i).getId());
-		}
-
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
 	public void getAllRestaurants200() {
 		List<RestaurantDTO> result = new ArrayList<>();
-		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
-		
-		for (int i = 0; i < restaurants.size(); i++) {
-			result.add(new RestaurantDTO(restaurants.get(i), null, null));
-		}
 		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
 		
 		try {
@@ -140,12 +110,6 @@ public class RestaurantControllerTest {
 	@SuppressWarnings("unchecked")
 	@Test
 	public void getAllRestaurants500() {
-		List<RestaurantDTO> result = new ArrayList<>();
-		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
-		
-		for (int i = 0; i < restaurants.size(); i++) {
-			result.add(new RestaurantDTO(restaurants.get(i), null, null));
-		}
 		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt()))
 		.thenThrow(NumberFormatException.class);
 		
@@ -162,11 +126,6 @@ public class RestaurantControllerTest {
 	public void getAllRestaurants403() {
 		String token  = "Bearer " + util.generateToken("96");
 		List<RestaurantDTO> result = new ArrayList<>();
-		List<Restaurant> restaurants = rdao.findAll(PageRequest.of(0, 10)).toList();
-		
-		for (int i = 0; i < restaurants.size(); i++) {
-			result.add(new RestaurantDTO(restaurants.get(i), null, null));
-		}
 		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
 		
 		try {
