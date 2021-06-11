@@ -10,7 +10,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.logging.Logger;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,54 +40,11 @@ public class RestaurantServiceTests {
 	@MockBean
 	private RelevanceSearchDAO reldao;
 
-	List<Restaurant> name;
-	List<Restaurant> rating;
-
-	@BeforeEach
-	public void setUp() {
-		
-		List<Restaurant> testRestaurants = new ArrayList<Restaurant>();
-		Restaurant r1 = new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
-				"Danny", "CA", 45678);
-		testRestaurants.add(r1);
-		Restaurant r2 = new Restaurant("Casa Feliz", 3, 3.7, "mexican, texmex, latin", 1, "1654 Tejas", "Primera Vista",
-				"TX", 17478);
-		testRestaurants.add(r2);
-		
-		Restaurant r3 = new Restaurant("HelloWorld", 1, 1.4, "hello, hola, ciao", 0, "Nowhere", "Primera Vista",
-				"TX", 17478);
-		testRestaurants.add(r3);
-		
-		Restaurant r4 = new Restaurant("Cafe Mocha", 4, 4.6, "cacao, fudge, chocalate", 0, "Hi There", "Primera Vista",
-				"TX", 17478);
-		testRestaurants.add(r4);
-		
-		Restaurant r5 = new Restaurant("Yummy!", 3, 2.2, "delicioso, rico, dulce", 0, "Knowhere", "Primera Vista",
-				"TX", 17478);
-		testRestaurants.add(r5);
-		
-		name = new ArrayList<>(testRestaurants);
-		name.sort((r01, r02) -> r01.getName().compareTo(r02.getName()));
-		
-		rating = new ArrayList<>(testRestaurants);
-		rating.sort((r01, r02) -> {
-			if (r01.getAverageRating() - r02.getAverageRating() > 0) {
-				return 1;
-			} else if(r01.getAverageRating() - r02.getAverageRating() < 0) {
-				return -1;
-			} else {
-				return 0;
-			}
-		});
-		
-		
-	}
-
 	@Test
 	public void getAllRestaurantsSortByName() {
 		Map<String, String> params = new HashMap<>();
         params.put("priceCategories", "1, 3, 4");
-        when(rdao.findAllSortByName(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>(name));
+        when(rdao.findAllSortByName(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
         
 		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 1.0, "a-to-z", 0);
 		log.info("Sort By Name: " + results.toString());
@@ -98,7 +54,7 @@ public class RestaurantServiceTests {
 	public void getAllRestaurantsSortByRating() {
 		Map<String, String> params = new HashMap<>();
         params.put("priceCategories", "1, 2, 4");
-        when(rdao.findAllSortByAverageRating(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>(rating));
+        when(rdao.findAllSortByAverageRating(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
 		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 4.0, "ratings", 0);
 		log.info("Sort By Rating: " + results.toString());
 		
@@ -112,7 +68,8 @@ public class RestaurantServiceTests {
 	@Test
 	public void addNewRestaurant() {
 		when(rdao.existsByNameAndStreetAddressAndCityAndStateAndZipCode(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(true);
-		assert (!rservice.addNewRestaurant(new RestaurantDTO(name.get(0), null, null)));
+		assert (!rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
+				"Danny", "CA", 45678), null, null)));
 	}
 
 	@Test
@@ -139,7 +96,7 @@ public class RestaurantServiceTests {
 		keywords.add("tacos");
 		keywords.add("burritos");
 
-		when(rdao.findByKeywordsSortByRating(Mockito.anyString(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>(name));
+		when(rdao.findByKeywordsSortByRating(Mockito.anyString(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
 		rservice.search(0, params, 1.0, 5, keywords, 0);
 
 
@@ -158,7 +115,7 @@ public class RestaurantServiceTests {
 		keywords.add("tacos");
 		keywords.add("burritos");
 
-		when(rdao.findByKeywordsSortByName(Mockito.anyString(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>(name));
+		when(rdao.findByKeywordsSortByName(Mockito.anyString(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
 		rservice.search(0, params, 1.0, 5, keywords, 0);
 
 
