@@ -43,7 +43,7 @@ public class RestaurantServiceTests {
 	@Test
 	public void getAllRestaurantsSortByName() {
 		Map<String, String> params = new HashMap<>();
-        params.put("priceCategories", "1, 3, 4");
+        params.put("priceCategories", "3");
         when(rdao.findAllSortByName(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
         
 		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 1.0, "a-to-z", 0);
@@ -61,12 +61,31 @@ public class RestaurantServiceTests {
 	}
 
 	@Test
+	public void getAllRestaurantsSortByDefault() {
+		Map<String, String> params = new HashMap<>();
+        params.put("priceCategories", "1, 2, 4");
+        when(rdao.findAllSortByName(Mockito.anyInt(), Mockito.anyDouble(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
+		List<RestaurantDTO> results = rservice.getAllRestaurants(params, 0, 5, 4.0, "default", 0);
+		log.info("Sort By Rating: " + results.toString());
+		
+	}
+	
+	@Test
 	public void findById() {
 		when(rdao.findById(Mockito.anyLong())).thenReturn(Optional.of(new Restaurant()));
+		rservice.findById((long) 1);
+	}
+	
+	@Test
+	public void addNewRestaurantHP() {
+		when(rdao.existsByNameAndStreetAddressAndCityAndStateAndZipCode(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
+		when(rdao.saveAndFlush(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
+		assert (rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
+				"Danny", "CA", 45678), null, null)));
 	}
 
 	@Test
-	public void addNewRestaurant() {
+	public void addNewRestaurantSP() {
 		when(rdao.existsByNameAndStreetAddressAndCityAndStateAndZipCode(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(true);
 		assert (!rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
 				"Danny", "CA", 45678), null, null)));
@@ -75,12 +94,13 @@ public class RestaurantServiceTests {
 	@Test
 	public void updateRestaurant() {
 		when(rdao.save(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
+		rservice.updateRestaurant(new RestaurantDTO(),(long) 2);
 
 	}
 
 	@Test
 	public void setRestaurantToInActive() {
-		when(rdao.save(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
+		rservice.setRestaurantToInActive((long) 1);
 	}
 
 	@Test
@@ -90,7 +110,6 @@ public class RestaurantServiceTests {
 		Map<String, String> params = new HashMap<>();
 		params.put("page", "0");
 		params.put("sort", "ratings");
-		params.put("priceCategories", "1, 3");
 		List<String> keywords = new ArrayList<>();
 		keywords.add("burgers");
 		keywords.add("tacos");

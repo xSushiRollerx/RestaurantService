@@ -68,7 +68,6 @@ public class RestaurantService {
 			restaurants = repository.findAllSortByName(active, rating, one, two, three, four, PageRequest.of(page, pageSize));
 			break;
 		}
-		log.info(restaurants.toString());
 		Long totalElements = restaurants.getTotalElements();
 		Integer totalPages = restaurants.getTotalPages();
 		return restaurants
