@@ -14,7 +14,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 @Component
 public class JWTUtil {
 	
-	private String SECRET_KEY = "smoothstack";
+	private String SECRET_KEY = "sushibyte";
 	
 	public String extractUserId(String token) {
 		return (extractClaim(token, Claims::getSubject));
