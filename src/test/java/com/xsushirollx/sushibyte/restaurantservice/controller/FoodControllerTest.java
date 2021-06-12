@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.FoodCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
 import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
@@ -96,7 +97,7 @@ public class FoodControllerTest {
     void addNewFoodItem400() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
-    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new Exception("Item Could Not Be Created. Food Item Already Exists."));
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new FoodCreationException());
     	
     	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
 		.andExpect(status().isBadRequest());
@@ -159,7 +160,7 @@ public class FoodControllerTest {
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenReturn(true);
     	
     	mockMvc.perform(delete("/food/435").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
-		.andExpect(status().isOk());
+		.andExpect(status().isNoContent());
 
     }
 

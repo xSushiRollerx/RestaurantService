@@ -2,6 +2,7 @@ package com.xsushirollx.sushibyte.restaurantservice.service;
 
 import com.xsushirollx.sushibyte.restaurantservice.dao.FoodDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.FoodCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 
@@ -36,14 +37,14 @@ public class FoodService {
 
 	}
 
-	public FoodDTO addNewFoodMenuItem(FoodDTO newFood) throws Exception {
+	public FoodDTO addNewFoodMenuItem(FoodDTO newFood) throws FoodCreationException {
 
 		if (!repository.existsByRestaurantIDAndName(newFood.getRestaurantID(), newFood.getName())) {
 			Food savedFood = new Food(newFood);
 			repository.save(savedFood);
 			return new FoodDTO(savedFood);
 		} else {
-			throw new Exception("Item Could Not Be Created. Food Item Already Exists.");
+			throw new FoodCreationException();
 		}
 
 	}

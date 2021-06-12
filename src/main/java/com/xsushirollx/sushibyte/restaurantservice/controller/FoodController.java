@@ -29,62 +29,29 @@ public class FoodController {
     private FoodService foodControllerService;
 
 
-//    @GetMapping
-//    ResponseEntity<List<Food>> getAllFoodMenuItems() {
-//
-//        return foodControllerService.getAllFoodMenuItems();
-//    }
-
-
 	@PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @GetMapping("/{id}")
     ResponseEntity<?> getOneFoodMenuItem(@PathVariable Long id) {
-		try {
 			return new ResponseEntity<>(foodControllerService.getOneFoodMenuItem(id), HttpStatus.OK);
-		} catch(FoodNotFoundException e) {
-			return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-
     }
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PostMapping
     ResponseEntity<?> addNewFoodMenuItem(@RequestBody FoodDTO newFood) {
-    	try {
 			return new ResponseEntity<>(foodControllerService.addNewFoodMenuItem(newFood), HttpStatus.CREATED);
-		} catch (Exception e) {
-			if(e.getMessage() != null && e.getMessage().equalsIgnoreCase("Item Could Not Be Created. Food Item Already Exists.")) {
-				return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
-			}
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
     }
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PutMapping("/{id}")
     ResponseEntity<?> updateFood(@RequestBody FoodDTO newFood, @PathVariable Long id) {
-    	try {
 			return new ResponseEntity<>(foodControllerService.updateFood(newFood,id), HttpStatus.OK);
-		} catch(FoodNotFoundException e) {
-			return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
-		}
     }
 
 	@PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @DeleteMapping("/{id}")
     ResponseEntity<Food> setFoodMenuItemToInActive(@PathVariable Long id) {
-		try {
 			foodControllerService.deleteFoodMenuItem(id);
-			return new ResponseEntity<Food>(HttpStatus.OK);
-		} catch(FoodNotFoundException e) {
-			return new ResponseEntity<>( HttpStatus.NOT_FOUND);
-		} catch (Exception e) {
-			return new ResponseEntity<>( HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+			return new ResponseEntity<Food>(HttpStatus.NO_CONTENT);
     }
 
 }
