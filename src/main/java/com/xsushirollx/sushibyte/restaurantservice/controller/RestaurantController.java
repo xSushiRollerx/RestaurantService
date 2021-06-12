@@ -20,96 +20,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 @Controller
 public class RestaurantController {
-	private Logger log = Logger.getLogger("RestaurantController");
+//	private Logger log = Logger.getLogger("RestaurantController");
 
 	@Autowired
     private RestaurantService restaurantControllerService;
 	
 	@PreAuthorize(value = "((hasAnyAuthority('CUSTOMER','NONE') and #active == 1) or hasAuthority('ADMINISTRATOR'))")
 	@GetMapping(value = "/restaurants/all/{page}")
-    ResponseEntity<?> getAllRestaurants(@PathVariable Integer page,@RequestParam Map<String, String> params, @RequestParam(value = "sort", defaultValue = "default") String sort, 
+    ResponseEntity<List<RestaurantDTO>> getAllRestaurants(@PathVariable Integer page,@RequestParam Map<String, String> params, @RequestParam(value = "sort", defaultValue = "default") String sort, 
     		@RequestParam(defaultValue = "1", name = "active") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
     		@RequestParam(defaultValue = "0.0", name = "rating") Double rating, @RequestParam(name="priceCategories", defaultValue="1,2,3,4") String priceCategories) {
-    	try {
     		return new ResponseEntity<>(restaurantControllerService.getAllRestaurants(params, page, pageSize, rating, sort,active), HttpStatus.OK);
-    	} catch(Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
     }
 
     @GetMapping(value = "/restaurant/{id}")
     @PostAuthorize("((returnObject.body == null or returnObject.body.getIsActive() == 1) and hasAnyAuthority('CUSTOMER','NONE')) or hasAuthority('ADMINISTRATOR')")
-    ResponseEntity<?> getRestaurant(@PathVariable Long id) {
-    	try {
-    		RestaurantDTO restaurant =  restaurantControllerService.findById(id);
-    		if (restaurant == null) {
-    			return new ResponseEntity<>("Requested Restaurant Does Not Exist", HttpStatus.NOT_FOUND);
-    		} else {
-    			return new ResponseEntity<>(restaurant, HttpStatus.OK);
-    		}
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
+    ResponseEntity<RestaurantDTO> getRestaurant(@PathVariable Long id) {
+    			return new ResponseEntity<>(restaurantControllerService.findById(id), HttpStatus.OK);
 
     }
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PostMapping(value = "/restaurant")
-    ResponseEntity<?> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant, @RequestHeader("Authorization") String token) {
-
-    	try {
-    		log.entering("RestaurantController", "addNewRestaurant");
-    		if (restaurantControllerService.addNewRestaurant(newRestaurant)) {
-    			return new ResponseEntity<>(HttpStatus.CREATED);
-    		} else {
-    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    		}
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
+    ResponseEntity<RestaurantDTO> addNewRestaurant(@RequestBody RestaurantDTO newRestaurant, @RequestHeader("Authorization") String token) {
+    	return new ResponseEntity<>(restaurantControllerService.addNewRestaurant(newRestaurant), HttpStatus.CREATED);
        
     }
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PutMapping("/restaurant/{id}")
-    ResponseEntity<?> updateRestaurant(@RequestBody RestaurantDTO newRestaurant, @PathVariable Long id, @RequestHeader("Authorization") String token) {
-    	try {
-    		if (restaurantControllerService.updateRestaurant(newRestaurant,id)) {
-    			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    		} else {
-    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    		}
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
+    ResponseEntity<RestaurantDTO> updateRestaurant(@RequestBody RestaurantDTO newRestaurant, @PathVariable Long id, @RequestHeader("Authorization") String token) {
+    	return new ResponseEntity<>(restaurantControllerService.updateRestaurant(newRestaurant,id), HttpStatus.OK);
     }
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @DeleteMapping("/restaurant/{id}")
-    ResponseEntity<?> setRestaurantToInActive(@PathVariable Long id, @RequestHeader("Authorization") String token) {
-    	
-    	try {
-    		if (restaurantControllerService.setRestaurantToInActive(id)) {
-    			return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-    		} else {
-    			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-    		}
-    		
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
+    ResponseEntity<RestaurantDTO> setRestaurantToInActive(@PathVariable Long id, @RequestHeader("Authorization") String token) {
+    	return new ResponseEntity<>(restaurantControllerService.setRestaurantToInActive(id), HttpStatus.OK); 
     	
         
     }
@@ -120,12 +70,7 @@ public class RestaurantController {
     		@RequestParam(name = "sort", defaultValue = "default") String sort, @PathVariable("page") Integer page,
     		@RequestParam(name = "active", defaultValue = "1") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize,
     		@RequestParam(name = "rating", defaultValue = "0.0") Double rating, @RequestParam(name="priceCategories", defaultValue="1,2,3,4") String priceCategories)  {
-    	try {
     		return new ResponseEntity<>(restaurantControllerService.search(page, params, rating, pageSize, keywords, active), HttpStatus.OK);
-    	} catch(Exception e) {
-    		e.printStackTrace();
-    		return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-    	}
     }
 }
 

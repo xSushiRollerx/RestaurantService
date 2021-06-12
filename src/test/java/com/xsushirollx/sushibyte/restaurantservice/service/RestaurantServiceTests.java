@@ -18,11 +18,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.xsushirollx.sushibyte.restaurantservice.dao.RelevanceSearchDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCreationException;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.RelevanceSearch;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
@@ -71,38 +75,60 @@ public class RestaurantServiceTests {
 	}
 	
 	@Test
-	public void findById() {
+	public void findByHP() {
 		when(rdao.findById(Mockito.anyLong())).thenReturn(Optional.of(new Restaurant()));
 		rservice.findById((long) 1);
+	}
+	
+	@Test
+	public void findByIdSP() {
+		when(rdao.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+		assertThrows(RestaurantNotFoundException.class, () -> {rservice.findById((long) 1);});
 	}
 	
 	@Test
 	public void addNewRestaurantHP() {
 		when(rdao.existsByNameAndStreetAddressAndCityAndStateAndZipCode(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(false);
 		when(rdao.saveAndFlush(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
-		assert (rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
-				"Danny", "CA", 45678), null, null)));
+		rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
+				"Danny", "CA", 45678), null, null));
 	}
 
 	@Test
 	public void addNewRestaurantSP() {
 		when(rdao.existsByNameAndStreetAddressAndCityAndStateAndZipCode(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyInt())).thenReturn(true);
-		assert (!rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
-				"Danny", "CA", 45678), null, null)));
+		assertThrows(RestaurantCreationException.class, () -> {rservice.addNewRestaurant(new RestaurantDTO(new Restaurant("Burger Bar", 2, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln",
+				"Danny", "CA", 45678), null, null));});	
 	}
+	
 
 	@Test
-	public void updateRestaurant() {
+	public void updateRestaurantHP() {
+		when(rdao.existsById(Mockito.anyLong())).thenReturn(true);
 		when(rdao.save(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
 		rservice.updateRestaurant(new RestaurantDTO(),(long) 2);
 
 	}
+	
+	@Test
+	public void updateRestaurantS() {
+		when(rdao.existsById(Mockito.anyLong())).thenReturn(false);
+		when(rdao.save(Mockito.any(Restaurant.class))).thenReturn(new Restaurant());
+		assertThrows(RestaurantNotFoundException.class, () -> {rservice.updateRestaurant((new RestaurantDTO(new Restaurant(null, null, null, null, null, null, null, null, null), null, null)), (long) 3);});
+
+	}
 
 	@Test
-	public void setRestaurantToInActive() {
+	public void setRestaurantToInActiveHP() {
+		when(rdao.setInactiveById(Mockito.anyLong())).thenReturn(Optional.of(new Restaurant()));
 		rservice.setRestaurantToInActive((long) 1);
 	}
 
+	@Test
+	public void setRestaurantToInActiveSP() {
+		when(rdao.setInactiveById(Mockito.anyLong())).thenReturn(Optional.empty());
+		assertThrows(RestaurantNotFoundException.class, ()-> {rservice.setRestaurantToInActive((long) 1);});
+	}
 	@Test
 	public void searchByRatings() {
 		log.entering("RestaurantServiceTests", "searchSecurity");

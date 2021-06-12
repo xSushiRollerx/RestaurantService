@@ -24,6 +24,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCreationException;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
@@ -152,7 +154,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void getRestaurant404() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.findById(Mockito.anyLong())).thenReturn(null);
+		when(rservice.findById(Mockito.anyLong())).thenThrow(RestaurantNotFoundException.class);
 		
 		
 		try {
@@ -194,7 +196,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void addNewRestaurant201() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenReturn(true);
+		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenReturn(new RestaurantDTO());
 		
 		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 		
@@ -209,7 +211,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void addNewRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenReturn(false);
+		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenThrow(new RestaurantCreationException());
 		
 		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 		
@@ -237,13 +239,13 @@ public class RestaurantControllerTest {
 	}
 	
 	@Test
-	public void updadteRestaurant201() {
+	public void updadteRestaurant200() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(true);
+		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(new RestaurantDTO());
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
-					.andExpect(status().isNoContent());
+					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -252,11 +254,11 @@ public class RestaurantControllerTest {
 	@Test
 	public void updateRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(false);
+		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenThrow(new RestaurantNotFoundException((long) 2));;
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
-					.andExpect(status().isBadRequest());
+					.andExpect(status().isNotFound());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -278,7 +280,7 @@ public class RestaurantControllerTest {
 	@Test
 	public void updateRestaurant403() {
 		String token  = "Bearer " + util.generateToken("96");
-		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(false);
+		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(new RestaurantDTO());
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -289,13 +291,13 @@ public class RestaurantControllerTest {
 	}
 	
 	@Test
-	public void deleteRestaurant201() {
+	public void deleteRestaurant200() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenReturn(true);
+		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenReturn(new RestaurantDTO());
 		
 		try {
 			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
-					.andExpect(status().isNoContent());
+					.andExpect(status().isOk());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -304,11 +306,11 @@ public class RestaurantControllerTest {
 	@Test
 	public void deleteRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenReturn(false);
+		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenThrow(new RestaurantNotFoundException((long) 2));
 		
 		try {
 			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
-					.andExpect(status().isBadRequest());
+					.andExpect(status().isNotFound());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
