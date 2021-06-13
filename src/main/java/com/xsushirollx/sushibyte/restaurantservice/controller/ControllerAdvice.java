@@ -11,7 +11,7 @@ import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCreationE
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 
 @RestControllerAdvice
-public class RestaurantControllerAdvice {
+public class ControllerAdvice {
 	
 	@ExceptionHandler(value = {RestaurantCreationException.class, FoodCreationException.class})
 	public ResponseEntity<?> restaurantExceptions(Exception e) {
