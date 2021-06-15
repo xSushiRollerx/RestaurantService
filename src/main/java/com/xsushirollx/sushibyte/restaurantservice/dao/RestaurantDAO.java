@@ -10,6 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 @Repository
@@ -20,7 +22,7 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 	@Modifying(clearAutomatically = true)
 	@Transactional
 	@Query(value = "UPDATE Restaurant restaurant SET restaurant.isActive = 0 WHERE restaurant.id = :id")
-	void setInactiveById(@Param("id") Long id);
+	Optional<Restaurant> setInactiveById(@Param("id") Long id);
 
 	@Query(value = "SELECT restaurant from Restaurant restaurant WHERE restaurant.name = :name AND "
 			+ "restaurant.streetAddress = :streetAddress AND restaurant.city = :city AND "

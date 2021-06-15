@@ -10,8 +10,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.FoodCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
 import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
@@ -70,13 +72,18 @@ public class FoodControllerTest {
     
     @Test
     @DisplayName("Get Food Item 500")
-    void getOneFoodItem500() throws Exception {
+    void getOneFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
     	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
-    	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
-		.andExpect(status().isInternalServerError());
+    	try {
+			mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+			.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 
     @Test
@@ -96,7 +103,7 @@ public class FoodControllerTest {
     void addNewFoodItem400() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
-    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new Exception("Item Could Not Be Created. Food Item Already Exists."));
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new FoodCreationException());
     	
     	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
 		.andExpect(status().isBadRequest());
@@ -105,13 +112,21 @@ public class FoodControllerTest {
     
     @Test
     @DisplayName("Add Food Item 500")
-    void addNewFoodItem500() throws Exception {
+    void addNewFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
-    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(NumberFormatException.class);
+    	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(NullPointerException.class);
     	
-    	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
-		.andExpect(status().isInternalServerError());
+    	try {
+			mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+			.andExpect(status().isInternalServerError());
+		} catch (JsonProcessingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
     
@@ -129,13 +144,18 @@ public class FoodControllerTest {
     
     @Test
     @DisplayName("Update Food Item 500")
-    void updateFoodItem500() throws Exception {
+    void updateFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
     	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
-    	mockMvc.perform(put("/food/12").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
-		.andExpect(status().isInternalServerError());
+    	try {
+			mockMvc.perform(put("/food/12").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
+			.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
     
@@ -159,7 +179,7 @@ public class FoodControllerTest {
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenReturn(true);
     	
     	mockMvc.perform(delete("/food/435").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
-		.andExpect(status().isOk());
+		.andExpect(status().isNoContent());
 
     }
 
@@ -177,13 +197,18 @@ public class FoodControllerTest {
     
     @Test
     @DisplayName("Delete Food Item 500")
-    void deleteFoodItem500() throws Exception {
+    void deleteFoodItem500() {
     	String token = "Bearer " + util.generateToken("98");
     	
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
-    	mockMvc.perform(delete("/food/24").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
-		.andExpect(status().isInternalServerError());
+    	try {
+			mockMvc.perform(delete("/food/24").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
+			.andExpect(status().isInternalServerError());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
 }

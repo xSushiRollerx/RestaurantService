@@ -34,20 +34,20 @@ public class JWTRequestFilter extends OncePerRequestFilter {
 		try {
 			String token = request.getHeader("Authorization").substring(7);
 			
-			int userId = Integer.parseInt(util.extractUserId(token));
+			long userId = Integer.parseInt(util.extractUserId(token));
 
 			User customer = null;
 				if (util.validateToken(token)) {
 					customer = cdao.findById(userId).get();
 				} else {
-					customer = new User(0, 0);
+					customer = new User((long) 0, 0);
 				}
 
 			UserAuthenticationToken customerAuthentication = new UserAuthenticationToken(customer, token);
 			SecurityContextHolder.getContext().setAuthentication(customerAuthentication);
 		} catch (Exception e) {
 			log.info("customer error thrown");
-			User customer = new User(0, 0);
+			User customer = new User((long) 0, 0);
 			UserAuthenticationToken customerAuthentication = new UserAuthenticationToken(customer, "BLANK");
 			SecurityContextHolder.getContext().setAuthentication(customerAuthentication);
 		} finally {
