@@ -7,6 +7,6 @@ import com.xsushirollx.sushibyte.restaurantservice.model.User;
 
 
 @Repository
-public interface UserDAO extends JpaRepository<User, Integer> {
+public interface UserDAO extends JpaRepository<User, Long> {
 
 }

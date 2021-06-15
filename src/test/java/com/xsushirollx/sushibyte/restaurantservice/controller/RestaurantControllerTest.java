@@ -10,6 +10,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,11 +24,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xsushirollx.sushibyte.restaurantservice.dao.UserDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
+import com.xsushirollx.sushibyte.restaurantservice.model.User;
 import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
 import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
 
@@ -42,6 +45,9 @@ public class RestaurantControllerTest {
 	
 	@MockBean
 	RestaurantService rservice;
+	
+	@MockBean
+	UserDAO udao;
 
 	RestaurantService realrservice = new RestaurantService();
 	
@@ -100,7 +106,6 @@ public class RestaurantControllerTest {
 	public void getAllRestaurants200() {
 		List<RestaurantDTO> result = new ArrayList<>();
 		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
-		
 		try {
 			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically").contentType(MediaType.APPLICATION_JSON))
 					.andExpect(status().isOk());
@@ -129,6 +134,7 @@ public class RestaurantControllerTest {
 		String token  = "Bearer " + util.generateToken("96");
 		List<RestaurantDTO> result = new ArrayList<>();
 		when(rservice.getAllRestaurants(Mockito.any(Map.class), Mockito.anyInt(), Mockito.anyInt(), Mockito.anyDouble(), Mockito.any(String.class), Mockito.anyInt())).thenReturn(result);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		
 		try {
 			mockMvc.perform(get("/restaurants/all/1?sort=alphabetically&&active=2").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
@@ -155,6 +161,7 @@ public class RestaurantControllerTest {
 	public void getRestaurant404() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.findById(Mockito.anyLong())).thenThrow(RestaurantNotFoundException.class);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		
 		try {
@@ -169,6 +176,8 @@ public class RestaurantControllerTest {
 	public void getRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.findById(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
+		
 		
 		
 		try {
@@ -183,6 +192,7 @@ public class RestaurantControllerTest {
 	public void getRestaurant403() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.findById(Mockito.anyLong())).thenReturn(new RestaurantDTO(testRestaurants.get(1), null, null));
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		log.info(testRestaurants.get(1).toString());
 		
 		try {
@@ -197,6 +207,7 @@ public class RestaurantControllerTest {
 	public void addNewRestaurant201() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenReturn(new RestaurantDTO());
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 		
@@ -212,6 +223,7 @@ public class RestaurantControllerTest {
 	public void addNewRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenThrow(new RestaurantCreationException());
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 		
@@ -227,6 +239,7 @@ public class RestaurantControllerTest {
 	public void addNewRestaurant500() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.addNewRestaurant(Mockito.any(RestaurantDTO.class))).thenThrow(NumberFormatException.class);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		RestaurantDTO r = new RestaurantDTO("Burger Bar", 3, 3.4, "american, burger, bar, milkshakes", 1, "1958 Sandy Ln", "Danny", "CA", 45678);
 		
@@ -242,7 +255,7 @@ public class RestaurantControllerTest {
 	public void updadteRestaurant200() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(new RestaurantDTO());
-		
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isOk());
@@ -254,7 +267,8 @@ public class RestaurantControllerTest {
 	@Test
 	public void updateRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
-		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenThrow(new RestaurantNotFoundException((long) 2));;
+		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenThrow(new RestaurantNotFoundException((long) 2));
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -268,6 +282,7 @@ public class RestaurantControllerTest {
 	public void updateRestaurant500() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -281,6 +296,7 @@ public class RestaurantControllerTest {
 	public void updateRestaurant403() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.updateRestaurant(Mockito.any(RestaurantDTO.class), Mockito.anyLong())).thenReturn(new RestaurantDTO());
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		
 		try {
 			mockMvc.perform(put("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -294,6 +310,7 @@ public class RestaurantControllerTest {
 	public void deleteRestaurant200() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenReturn(new RestaurantDTO());
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		try {
 			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -307,6 +324,7 @@ public class RestaurantControllerTest {
 	public void deleteRestaurant400() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenThrow(new RestaurantNotFoundException((long) 2));
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		try {
 			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -320,6 +338,7 @@ public class RestaurantControllerTest {
 	public void deleteRestaurant500() {
 		String token  = "Bearer " + util.generateToken("98");
 		when(rservice.setRestaurantToInActive(Mockito.anyLong())).thenThrow(NumberFormatException.class);
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
 		
 		try {
 			mockMvc.perform(delete("/restaurant/1").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -334,6 +353,7 @@ public class RestaurantControllerTest {
 	public void search403() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		
 		try {
 			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger&&active=0").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
@@ -348,7 +368,7 @@ public class RestaurantControllerTest {
 	public void search200() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenReturn(new ArrayList<RestaurantDTO>());
-		
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		try {
 			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isOk());
@@ -362,7 +382,7 @@ public class RestaurantControllerTest {
 	public void search500() {
 		String token  = "Bearer " + util.generateToken("96");
 		when(rservice.search(Mockito.anyInt(), Mockito.any(Map.class), Mockito.anyDouble(), Mockito.anyInt(), Mockito.any(List.class), Mockito.anyInt())).thenThrow(NumberFormatException.class);
-		
+		when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 96, 1)));
 		try {
 			mockMvc.perform(get("/restaurants/0?sort=rating&&keywords=queen,burger").contentType(MediaType.APPLICATION_JSON).header("Authorization", token).content(objectMapper.writeValueAsString(r)))
 					.andExpect(status().isInternalServerError());
