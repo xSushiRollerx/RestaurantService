@@ -61,10 +61,8 @@ pipeline {
     }
     post {
         always {
-            if (getContext(hudson.FilePath)) {
                    sh 'mvn clean'
                    sh 'docker system prune -f'
-         }
         }
          
            
