@@ -60,7 +60,7 @@ pipeline {
     }
     post {
         always {
-            sh 'mvn clean'
+           // sh 'mvn clean'
             sh "docker system prune -f"
         }
     }
