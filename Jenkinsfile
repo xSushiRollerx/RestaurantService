@@ -1,3 +1,4 @@
+node {
 pipeline {
     agent any
     environment {
@@ -64,4 +65,5 @@ pipeline {
            sh 'docker system prune -f'
         }
     }
+}
 }
