@@ -47,6 +47,7 @@ pipeline {
                 sh 'docker push ${AWS_ID}.dkr.ecr.us-west-1.amazonaws.com/${REPO_URL}:${COMMIT_HASH}'
             }
         }
+        
 //         stage("Deploy") {
 //             steps {
 //                 echo "Deploying cloudformation.."
