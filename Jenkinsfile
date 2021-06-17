@@ -1,5 +1,6 @@
-node {
+
 pipeline {
+    node {
     agent any
     environment {
         COMMIT_HASH = "${sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()}"
