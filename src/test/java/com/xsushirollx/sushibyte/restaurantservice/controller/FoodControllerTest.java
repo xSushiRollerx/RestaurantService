@@ -12,9 +12,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.xsushirollx.sushibyte.restaurantservice.dao.UserDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
+import com.xsushirollx.sushibyte.restaurantservice.model.User;
 import com.xsushirollx.sushibyte.restaurantservice.security.JWTUtil;
 import com.xsushirollx.sushibyte.restaurantservice.service.FoodService;
 import com.xsushirollx.sushibyte.restaurantservice.service.RestaurantService;
@@ -26,6 +28,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Optional;
+
 @AutoConfigureMockMvc
 @SpringBootTest
 public class FoodControllerTest {
@@ -36,6 +40,9 @@ public class FoodControllerTest {
 
     @MockBean
     FoodService fservice;
+    
+    @MockBean
+    UserDAO udao;
     
     @Autowired
 	JWTUtil util;
@@ -50,7 +57,7 @@ public class FoodControllerTest {
     @DisplayName("Get Food Item 200")
     void getOneFoodItem200() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
-    	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenReturn(new FoodDTO());
     	
     	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
@@ -63,6 +70,7 @@ public class FoodControllerTest {
     void getOneFoodItem404() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
     	
     	mockMvc.perform(get("/food/112").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
@@ -75,6 +83,7 @@ public class FoodControllerTest {
     void getOneFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.getOneFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
     	try {
@@ -91,6 +100,7 @@ public class FoodControllerTest {
     void addNewFoodItem201() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenReturn(new FoodDTO((long) 1,"Delete", 2.99, "test food to be deleted", 0, 1, "Delete"));
     	
     	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
@@ -103,6 +113,7 @@ public class FoodControllerTest {
     void addNewFoodItem400() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(new FoodCreationException());
     	
     	mockMvc.perform(post("/food").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
@@ -115,6 +126,7 @@ public class FoodControllerTest {
     void addNewFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.addNewFoodMenuItem(Mockito.any(FoodDTO.class))).thenThrow(NullPointerException.class);
     	
     	try {
@@ -135,6 +147,7 @@ public class FoodControllerTest {
     void updateFoodItem200() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenReturn(new FoodDTO());
     	
     	mockMvc.perform(put("/food/77").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
@@ -147,6 +160,7 @@ public class FoodControllerTest {
     void updateFoodItem500() {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
     	try {
@@ -164,6 +178,7 @@ public class FoodControllerTest {
     void updateFoodItem404() throws Exception {
     	String token  = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.updateFood(Mockito.any(FoodDTO.class), Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
     	
     	mockMvc.perform(put("/food/435").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(new FoodDTO())).header("Authorization", token))
@@ -176,6 +191,7 @@ public class FoodControllerTest {
     void deleteFoodItem200() throws Exception {
     	String token = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenReturn(true);
     	
     	mockMvc.perform(delete("/food/435").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
@@ -188,6 +204,7 @@ public class FoodControllerTest {
     void deleteFoodItem404() throws Exception {
     	String token = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenThrow(FoodNotFoundException.class);
     	
     	mockMvc.perform(delete("/food/35").contentType(MediaType.APPLICATION_JSON).header("Authorization", token))
@@ -200,6 +217,7 @@ public class FoodControllerTest {
     void deleteFoodItem500() {
     	String token = "Bearer " + util.generateToken("98");
     	
+    	when(udao.findById(Mockito.anyLong())).thenReturn(Optional.of(new User((long) 98, 2)));
     	when(fservice.deleteFoodMenuItem(Mockito.anyLong())).thenThrow(NumberFormatException.class);
     	
     	try {

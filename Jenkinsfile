@@ -3,6 +3,8 @@ pipeline {
     environment {
         COMMIT_HASH = "${sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()}"
         IMG_NAME = "restaurant-service"
+        AWS_ID = credentials('aws-id')
+        REPO_URL = credentials('service-restaurant')
     }
 
     tools {
@@ -38,11 +40,11 @@ pipeline {
         stage("Docker Build") {
             steps {
                 echo "Docker Build...."
-                sh "aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin 635496629433.dkr.ecr.us-west-1.amazonaws.com"
+                sh 'aws ecr get-login-password --region us-west-1 | docker login --username AWS --password-stdin ${AWS_ID}.dkr.ecr.us-west-1.amazonaws.com'
                 sh "docker build --tag ${IMG_NAME}:${COMMIT_HASH} ."
-                sh "docker tag ${IMG_NAME}:${COMMIT_HASH} 635496629433.dkr.ecr.us-west-1.amazonaws.com/restaurant-service:${COMMIT_HASH}"
+                sh 'docker tag ${IMG_NAME}:${COMMIT_HASH} ${AWS_ID}.dkr.ecr.us-west-1.amazonaws.com/${REPO_URL}:${COMMIT_HASH}'
                 echo "Docker Push..."
-                sh "docker push 635496629433.dkr.ecr.us-west-1.amazonaws.com/${IMG_NAME}:${COMMIT_HASH}"
+                sh 'docker push ${AWS_ID}.dkr.ecr.us-west-1.amazonaws.com/${REPO_URL}:${COMMIT_HASH}'
             }
         }
 //         stage("Deploy") {
