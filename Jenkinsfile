@@ -1,7 +1,6 @@
 
 pipeline {
     agent any
-    node {
     environment {
         COMMIT_HASH = "${sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()}"
         IMG_NAME = "restaurant-service"
@@ -67,4 +66,4 @@ pipeline {
         }
     }
 }
-}
+
