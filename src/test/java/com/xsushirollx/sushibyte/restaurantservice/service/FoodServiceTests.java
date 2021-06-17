@@ -3,18 +3,23 @@ package com.xsushirollx.sushibyte.restaurantservice.service;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import static org.mockito.Mockito.when;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import com.xsushirollx.sushibyte.restaurantservice.dao.FoodDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.FoodCreationException;
 import com.xsushirollx.sushibyte.restaurantservice.exception.FoodNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.Food;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
@@ -22,14 +27,13 @@ import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 @SpringBootTest
 public class FoodServiceTests {
 
-
 	@Autowired
 	FoodService fservice;
 
-	@Autowired
+	@MockBean
 	private RestaurantDAO rdao;
 
-	@Autowired
+	@MockBean
 	private FoodDAO fdao;
 
 	private List<Restaurant> testRestaurants = new ArrayList<>();
@@ -46,7 +50,7 @@ public class FoodServiceTests {
 		testRestaurants.add(r2);
 
 		for (int i = 0; i < testRestaurants.size(); i++) {
-			rdao.saveAndFlush(testRestaurants.get(i));
+			testRestaurants.get(i).setId((long) i);
 		}
 
 		// Restaurant 1 Food
@@ -69,80 +73,75 @@ public class FoodServiceTests {
 		testFoods.add(f4);
 
 		for (int i = 0; i < testFoods.size(); i++) {
-			fdao.saveAndFlush(testFoods.get(i));
-		}
-
-		for (int i = 0; i < testRestaurants.size(); i++) {
-			testRestaurants.set(i, rdao.findById(testRestaurants.get(i).getId()).get());
-		}
-	}
-
-	@AfterEach
-	public void tearDown() {
-		for (int i = 0; i < testRestaurants.size(); i++) {
-			rdao.deleteById(testRestaurants.get(i).getId());
-		}
-
-		for (int i = 0; i < testFoods.size(); i++) {
-			fdao.deleteById(testFoods.get(i).getId());
+			testFoods.get(i).setId((long) i);
 		}
 
 	}
 
 	@Test
 	public void getOneFoodMenuItemHP() {
-		assertEquals(new FoodDTO(testFoods.get(0)), fservice.getOneFoodMenuItem(testFoods.get(0).getId()));
+		when(fdao.findById(Mockito.anyLong())).thenReturn(Optional.of(new Food()));
+		fservice.getOneFoodMenuItem(testFoods.get(0).getId());
 	}
 
 	@Test
 	public void addNewFoodMenuItemHP() throws Exception {
+		when(fdao.save(Mockito.any(Food.class))).thenReturn(new Food());
+		when(fdao.existsByRestaurantIDAndName(Mockito.anyLong(), Mockito.anyString())).thenReturn(false);
 		FoodDTO newFood = new FoodDTO(testRestaurants.get(0).getId(), "Gumbo", 17.89,
 				"Good ole gumbo made by Princess Tiana herself", 0, 1, "Soup");
-		FoodDTO savedFood = fservice.addNewFoodMenuItem(newFood);
-		testFoods.add(new Food(savedFood));
+		fservice.addNewFoodMenuItem(newFood);
 	}
-	
+
 	@Test
 	public void addNewFoodMenuItemSP() throws Exception {
+		when(fdao.save(Mockito.any(Food.class))).thenReturn(new Food());
+		when(fdao.existsByRestaurantIDAndName(Mockito.anyLong(), Mockito.anyString())).thenReturn(true);
 		FoodDTO newFood = new FoodDTO(testFoods.get(0));
-		assertThrows(Exception.class, () -> { fservice.addNewFoodMenuItem(newFood);});
+		assertThrows(FoodCreationException.class, () -> {
+			fservice.addNewFoodMenuItem(newFood);
+		});
 	}
-	
+
 	@Test
 	public void updateFoodMenuItemHP() throws Exception {
+		when(fdao.existsById(Mockito.anyLong())).thenReturn(true);
+		when(fdao.save(Mockito.any(Food.class))).thenReturn(new Food());
 		FoodDTO newFood = new FoodDTO(testFoods.get(0));
 		newFood.setName("New Name");
 		assertEquals("New Name", fservice.updateFood(newFood, newFood.getId()).getName());
 	}
-	
+
 	@Test
 	public void updateFoodMenuItemSP() throws Exception {
-		Food addFood = new Food(testRestaurants.get(0).getId(), "Delete", 2.99, "test food to be deleted", 0, 1, "Delete");
-		fdao.saveAndFlush(addFood);
-		fdao.deleteById(addFood.getId());
-		
+		when(fdao.existsById(Mockito.anyLong())).thenReturn(false);
+		when(fdao.save(Mockito.any(Food.class))).thenReturn(new Food());
+		Food addFood = new Food(testRestaurants.get(0).getId(), "Delete", 2.99, "test food to be deleted", 0, 1,
+				"Delete");
+
 		FoodDTO newFood = new FoodDTO(addFood);
 		newFood.setName("New Name");
-		assertThrows(FoodNotFoundException.class, () -> {  fservice.updateFood(newFood, newFood.getId());});
+		assertThrows(FoodNotFoundException.class, () -> {
+			fservice.updateFood(newFood, newFood.getId());
+		});
 	}
-	
+
 	@Test
 	public void deleteFoodMenuItemHP() throws Exception {
-		
-		Food newFood = new Food(testRestaurants.get(0).getId(), "Delete", 2.99, "test food to be deleted", 0, 1, "Delete");
-		fdao.saveAndFlush(newFood);
-		
-		assert(fservice.deleteFoodMenuItem(newFood.getId()));
+
+		when(fdao.existsById(Mockito.anyLong())).thenReturn(true);
+		assert (fservice.deleteFoodMenuItem((long) 2));
 	}
-	
+
 	@Test
 	public void deleteFoodMenuItemSP() throws Exception {
-		Food addFood = new Food(testRestaurants.get(0).getId(), "Delete", 2.99, "test food to be deleted", 0, 1, "Delete");
-		fdao.saveAndFlush(addFood);
-		fdao.deleteById(addFood.getId());
-		
-		assertThrows(FoodNotFoundException.class, () -> {  fservice.deleteFoodMenuItem(addFood.getId());});
+		when(fdao.existsById(Mockito.anyLong())).thenReturn(false);
+		Food addFood = new Food(testRestaurants.get(0).getId(), "Delete", 2.99, "test food to be deleted", 0, 1,
+				"Delete");
+
+		assertThrows(FoodNotFoundException.class, () -> {
+			fservice.deleteFoodMenuItem(addFood.getId());
+		});
 	}
-	
 
 }
