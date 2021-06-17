@@ -3,6 +3,8 @@ package com.xsushirollx.sushibyte.restaurantservice.service;
 import com.xsushirollx.sushibyte.restaurantservice.dao.RelevanceSearchDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dao.RestaurantDAO;
 import com.xsushirollx.sushibyte.restaurantservice.dto.RestaurantDTO;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantCreationException;
+import com.xsushirollx.sushibyte.restaurantservice.exception.RestaurantNotFoundException;
 import com.xsushirollx.sushibyte.restaurantservice.model.RelevanceSearch;
 import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 
@@ -70,41 +72,45 @@ public class RestaurantService {
 		}
 		Long totalElements = restaurants.getTotalElements();
 		Integer totalPages = restaurants.getTotalPages();
-		return restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
+		return restaurants
+				.map(r -> new RestaurantDTO(r, totalElements, totalPages))
+				.getContent();
 	}
 
-	public RestaurantDTO findById(Long id) {
+	public RestaurantDTO findById(Long id) throws RestaurantNotFoundException {
 		Optional<Restaurant> r = repository.findById(id);
-		return r.isPresent() ? new RestaurantDTO(r.get(), null, null) : null;
+		if (!r.isPresent()) throw new RestaurantNotFoundException(id);
+		return new RestaurantDTO(r.get(), null, null);
 	}
 
-	public boolean addNewRestaurant(RestaurantDTO newRestaurant) {
+	public RestaurantDTO addNewRestaurant(RestaurantDTO newRestaurant) throws RestaurantCreationException {
 		Restaurant restaurantToBeAdded = new Restaurant(newRestaurant);
 
 		boolean duplicateRestaurantCheck = repository.existsByNameAndStreetAddressAndCityAndStateAndZipCode(
 				restaurantToBeAdded.getName(), restaurantToBeAdded.getStreetAddress(), restaurantToBeAdded.getCity(),
 				restaurantToBeAdded.getState(), restaurantToBeAdded.getZipCode());
 
+		log.info("duplicate check " + duplicateRestaurantCheck);
 		if (!duplicateRestaurantCheck) {
-			repository.saveAndFlush(restaurantToBeAdded);
-			return true;
+			return new RestaurantDTO(repository.saveAndFlush(restaurantToBeAdded), null, null);
 		} else {
-			return false;
+			throw new RestaurantCreationException();
 		}
 
 	}
 
-	public boolean updateRestaurant(RestaurantDTO updatedRestaurant, Long id) {
+	public RestaurantDTO updateRestaurant(RestaurantDTO updatedRestaurant, Long id)  throws RestaurantNotFoundException {
 
+		if (!repository.existsById(id)) throw new RestaurantNotFoundException(id);
 		Restaurant r = new Restaurant(updatedRestaurant);
 		r.setId(id);
-		repository.save(r);
-		return true;
+		return new RestaurantDTO(repository.save(r), null, null);
 	}
 
-	public boolean setRestaurantToInActive(Long id) {
-		repository.setInactiveById(id);
-		return true;
+	public  RestaurantDTO setRestaurantToInActive(Long id) throws RestaurantNotFoundException {
+		Optional<Restaurant> r = repository.setInactiveById(id);
+		if (!r.isPresent()) throw new RestaurantNotFoundException(id);
+		return new RestaurantDTO(r.get(), null, null);
 	}
 
 	public List<RestaurantDTO> search(Integer page, Map<String, String> params, Double rating, Integer pageSize, List<String> keywords,
@@ -148,7 +154,7 @@ public class RestaurantService {
 					PageRequest.of(page, pageSize));
 			Long totalElements = restaurants.getTotalElements();
 			Integer totalPages = restaurants.getTotalPages();
-			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).toList();
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElements, totalPages)).getContent();
 			break; 
 		case "ratings":
 			restaurants = repository.findByKeywordsSortByRating(regex.substring(1), active, rating, one, two, three, four,
@@ -157,14 +163,14 @@ public class RestaurantService {
 			Long totalElementsRatings = restaurants.getTotalElements();
 			Integer totalPagesRatings = restaurants.getTotalPages();
 			
-			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).toList();
+			results = restaurants.map(r -> new RestaurantDTO(r, totalElementsRatings, totalPagesRatings)).getContent();
 			break;
 		default:
 			Page<RelevanceSearch> relevantRestaurants = relevanceRepository.findByKeywordsSortByRelevance(regex.substring(1), rating, active, one, two,
 					three, four, PageRequest.of(page, pageSize));
 			Long totalElementsRelevance = relevantRestaurants.getTotalElements();
 			Integer totalPagesRelevance = relevantRestaurants.getTotalPages();
-			results = relevantRestaurants.map(r -> new RestaurantDTO(r, totalElementsRelevance, totalPagesRelevance)).toList();
+			results = relevantRestaurants.map(r -> new RestaurantDTO(r, totalElementsRelevance, totalPagesRelevance)).getContent();
 
 			if (totalPagesRelevance == page + 1) {
 				results = new ArrayList<>(results);

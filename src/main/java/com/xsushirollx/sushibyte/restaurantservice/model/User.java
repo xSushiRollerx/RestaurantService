@@ -12,7 +12,7 @@ public class User  {
 
 	@Id
 	@Column(name = "id")
-	Integer id;
+	Long id;
 	
 	@Column(name = "user_role")
 	Integer role;
@@ -28,17 +28,17 @@ public class User  {
 		super();
 	}
 
-	public User(Integer id, Integer role) {
+	public User(Long id, Integer role) {
 		super();
 		this.id = id;
 		this.role = role;
 	}
 
-	public Integer getId() {
+	public Long getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
