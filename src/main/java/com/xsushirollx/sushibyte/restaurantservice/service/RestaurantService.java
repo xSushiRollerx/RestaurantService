@@ -108,8 +108,13 @@ public class RestaurantService {
 	}
 
 	public  RestaurantDTO setRestaurantToInActive(Long id) throws RestaurantNotFoundException {
-		Optional<Restaurant> r = repository.setInactiveById(id);
-		if (!r.isPresent()) throw new RestaurantNotFoundException(id);
+		Optional<Restaurant> r = repository.findById(id);
+		if (r.isPresent()) {
+			repository.setInactiveById(id);
+			r.get().setIsActive(0);
+		} else {
+			 throw new RestaurantNotFoundException(id);
+		}
 		return new RestaurantDTO(r.get(), null, null);
 	}
 

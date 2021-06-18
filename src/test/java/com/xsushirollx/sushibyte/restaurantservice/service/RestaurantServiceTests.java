@@ -120,13 +120,13 @@ public class RestaurantServiceTests {
 
 	@Test
 	public void setRestaurantToInActiveHP() {
-		when(rdao.setInactiveById(Mockito.anyLong())).thenReturn(Optional.of(new Restaurant()));
+		when(rdao.findById(Mockito.anyLong())).thenReturn(Optional.of(new Restaurant()));
 		rservice.setRestaurantToInActive((long) 1);
 	}
 
 	@Test
 	public void setRestaurantToInActiveSP() {
-		when(rdao.setInactiveById(Mockito.anyLong())).thenReturn(Optional.empty());
+		when(rdao.findById(Mockito.anyLong())).thenReturn(Optional.empty());
 		assertThrows(RestaurantNotFoundException.class, ()-> {rservice.setRestaurantToInActive((long) 1);});
 	}
 	@Test
