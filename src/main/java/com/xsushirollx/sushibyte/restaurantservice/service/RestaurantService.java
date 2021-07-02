@@ -11,6 +11,8 @@ import com.xsushirollx.sushibyte.restaurantservice.model.Restaurant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -185,6 +187,14 @@ public class RestaurantService {
 		}
 		log.info(results.toString());
 		return results;
+	}
+	
+	public List<RestaurantDTO> searchByNameExclusively(Integer page, Integer pageSize, String keyword,Integer active) {
+		
+		Page<Restaurant> restaurants = repository.findByNameStartingWithAndIsActiveGreaterThanEqual(keyword, active, PageRequest.of(page, pageSize, Sort.by(Direction.ASC, "name")));
+		return restaurants
+				.map(r -> new RestaurantDTO(r, restaurants.getTotalElements(), restaurants.getTotalPages()))
+				.getContent();
 	}
 
 }

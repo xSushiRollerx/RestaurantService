@@ -72,6 +72,15 @@ public class RestaurantController {
     		@RequestParam(name = "rating", defaultValue = "0.0") Double rating, @RequestParam(name="priceCategories", defaultValue="1,2,3,4") String priceCategories)  {
     		return new ResponseEntity<>(restaurantControllerService.search(page, params, rating, pageSize, keywords, active), HttpStatus.OK);
     }
+    
+    @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
+    @GetMapping("/restaurants/name")
+    ResponseEntity<List<RestaurantDTO>> searchByNameExclusively(@RequestParam Map<String, String> params, @RequestParam("keywords") String keyword,
+    		@RequestParam(name = "page", defaultValue = "0") Integer page,
+    		@RequestParam(name = "active", defaultValue = "1") Integer active, @RequestParam(value="pageSize", defaultValue = "10") Integer pageSize
+    		)  {
+    		return new ResponseEntity<>(restaurantControllerService.searchByNameExclusively(page, pageSize, keyword, active), HttpStatus.OK);
+    }
 }
 
 
