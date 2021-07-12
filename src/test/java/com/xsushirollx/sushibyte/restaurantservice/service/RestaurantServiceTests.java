@@ -184,6 +184,16 @@ public class RestaurantServiceTests {
 
 
 	}
+	
+	@Test
+	public void searchByNameExclusively() {
+
+		when(rdao.findByNameStartingWithAndIsActiveGreaterThanEqual(Mockito.anyString(), Mockito.anyInt(), Mockito.any(Pageable.class) )).thenReturn(new TestPage<Restaurant>());
+		rservice.searchByNameExclusively(0, 10, "hel", 0);
+
+
+	}
+	
 
 private class TestPage<U> implements Page<U> {
 	private List<U> testRestaurants;

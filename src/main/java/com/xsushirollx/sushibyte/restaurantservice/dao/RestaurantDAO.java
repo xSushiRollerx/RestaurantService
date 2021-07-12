@@ -65,4 +65,6 @@ public interface RestaurantDAO extends JpaRepository<Restaurant, Long> {
 			+ "order by name asc", nativeQuery = true)
 	Page<Restaurant> findAllSortByName(@Param("active") Integer active, @Param("rating") Double rating, @Param("one") Integer one, @Param("two") Integer two, 
 			@Param("three") Integer three, @Param("four") Integer four, Pageable pageRequest);
+
+	Page<Restaurant> findByNameStartingWithAndIsActiveGreaterThanEqual(String string, int active, Pageable pageRequest);
 }
