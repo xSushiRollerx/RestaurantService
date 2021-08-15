@@ -15,16 +15,19 @@ public class ControllerAdvice {
 	
 	@ExceptionHandler(value = {RestaurantCreationException.class, FoodCreationException.class})
 	public ResponseEntity<?> restaurantExceptions(Exception e) {
+		e.printStackTrace();;
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 	}
 	
 	@ExceptionHandler(value = {RestaurantNotFoundException.class, FoodNotFoundException.class})
 	public ResponseEntity<?> restaurantNotFoundExceptions(Exception e) {
+		e.printStackTrace();
 		return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
 	}
 	
 	@ExceptionHandler(value = Exception.class)
 	public ResponseEntity<?> exceptions(Exception e) {
+		e.printStackTrace();
 		if (e.getMessage().equalsIgnoreCase("Access is denied")) {
 			return new ResponseEntity<>("Status 403: Access Denied", HttpStatus.FORBIDDEN);
 		}

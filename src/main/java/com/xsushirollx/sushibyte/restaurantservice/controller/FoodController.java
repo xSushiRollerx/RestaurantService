@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.xsushirollx.sushibyte.restaurantservice.dto.FoodDTO;
@@ -34,7 +35,7 @@ public class FoodController {
 
     @PreAuthorize(value = "hasAuthority('ADMINISTRATOR')")
     @PostMapping
-    ResponseEntity<?> addNewFoodMenuItem(@RequestBody FoodDTO newFood) {
+    ResponseEntity<?> addNewFoodMenuItem(@RequestBody FoodDTO newFood, @RequestHeader("Authorization") String authorization) {
 			return new ResponseEntity<>(foodControllerService.addNewFoodMenuItem(newFood), HttpStatus.CREATED);
     }
 
