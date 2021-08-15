@@ -51,6 +51,7 @@ public class Food {
         this.summary = food.getSummary();
         this.special = food.getSpecial();
         this.isActive = food.getIsActive();
+        this.restaurantID = food.getRestaurantID();
         this.category = food.getCategory();
     }
 
